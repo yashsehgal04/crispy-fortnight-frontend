@@ -52,25 +52,22 @@ function Landingpage() {
       speed: 500,
       slidesToShow: slidesToShow,
       slidesToScroll: 1,
-      centerMode: items.length <= 3,
-      centerPadding: items.length <= 3 ? '0' : '20px',
+      centerMode: false, // Disable center mode for better mobile handling
+      centerPadding: '0',
       responsive: [
         {
           breakpoint: 1024,
           settings: {
             slidesToShow: items.length < 2 ? items.length : 2,
             slidesToScroll: 1,
-            centerMode: items.length <= 2,
-            centerPadding: items.length <= 2 ? '0' : '10px',
           },
         },
         {
           breakpoint: 600,
           settings: {
-            slidesToShow: items.length < 1 ? items.length : 1,
+            slidesToShow: 1, // Show only 1 slide on small screens
             slidesToScroll: 1,
-            centerMode: items.length <= 1,
-            centerPadding: items.length <= 1 ? '0' : '5px',
+            arrows: false, // Hide arrows on small screens to avoid overflow
           },
         },
       ],
@@ -78,36 +75,36 @@ function Landingpage() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen overflow-hidden">
       <Navbar showOther={true} showR={true}  />
       <Header data={landingPageData.header} />
       <Services data={landingPageData.Services} />
-      <div id="services" className="py-16 bg-white">
-       
-      </div>
-      <div className="w-full max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-docsoGreen text-center m-10 border-b border-gray-300">MEET OUR DOCTORS</h2>
-          {doctors.length > 0 ? (
-            <Slider {...getSliderSettings(doctors)}>
-              {doctors.map((doctor) => (
-                <DoctorCard key={doctor._id} doctor={doctor} />
-              ))}
-            </Slider>
-          ) : (
-            <p className="text-gray-600">No doctors available</p>
-          )}
+      
+      {/* Doctor and Hospital Section */}
+      <div className="w-full max-w-6xl mx-auto overflow-hidden">
+        <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen m-10 border-b border-gray-300">MEET OUR DOCTORS</h2>
+        {doctors.length > 0 ? (
+          <Slider {...getSliderSettings(doctors)}>
+            {doctors.map((doctor) => (
+              <DoctorCard key={doctor._id} doctor={doctor} />
+            ))}
+          </Slider>
+        ) : (
+          <p className="text-center text-gray-600">No doctors available</p>
+        )}
 
-          <h2 className="text-4xl font-bold text-docsoGreen text-center mt-16 m-10 border-b border-gray-300">OUR REGISTERED HOSPITALS</h2>
-          {hospitals.length > 0 ? (
-            <Slider {...getSliderSettings(hospitals)}>
-              {hospitals.map((hospital) => (
-                <HospitalCard key={hospital._id} hospital={hospital} />
-              ))}
-            </Slider>
-          ) : (
-            <p className="text-gray-600">No hospitals available</p>
-          )}
-        </div>
+        <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen mt-16 m-10 border-b border-gray-300">OUR REGISTERED HOSPITALS</h2>
+        {hospitals.length > 0 ? (
+          <Slider {...getSliderSettings(hospitals)}>
+            {hospitals.map((hospital) => (
+              <HospitalCard key={hospital._id} hospital={hospital} />
+            ))}
+          </Slider>
+        ) : (
+          <p className="text-center text-gray-600">No hospitals available</p>
+        )}
+      </div>
+
       <Footer />
     </div>
   );

@@ -1,5 +1,6 @@
 import React from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 export const Header = (props) => {
   const navigate = useNavigate();
   const handleRegisterClick = () => {
@@ -7,25 +8,23 @@ export const Header = (props) => {
   };
 
   return (
-    <header id="header">
-      <div className="intro">
-        <div className="overlay">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-8 col-md-offset-2 intro-text">
-                <h1>
-                  {props.data ? props.data.title : "Loading"}
-                  <span></span>
-                </h1>
-                <p>{props.data ? props.data.paragraph : "Loading"}</p>
-                <button
-                
-                  className="btn btn-custom btn-lg page-scroll" onClick={handleRegisterClick}
-                >
-                  Register Now
-                </button>
-              </div>
-            </div>
+    <header id="header" className="relative bg-cover bg-center h-screen w-full overflow-hidden">
+      <div className="intro h-full flex items-center justify-center">
+        <div className="overlay bg-opacity-50 absolute inset-0 bg-black"></div>
+        <div className="relative z-10 container mx-auto px-6 md:px-12 text-center">
+          <div className="intro-text text-white">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
+              {props.data ? props.data.title : "Loading"}
+            </h1>
+            <p className="text-lg md:text-xl">
+              {props.data ? props.data.paragraph : "Loading"}
+            </p>
+            <button
+              className="mt-8 px-6 py-3 text-lg font-semibold bg-docsoGreen hover:bg-darkGreen text-white rounded-full transition duration-300"
+              onClick={handleRegisterClick}
+            >
+              Register Now
+            </button>
           </div>
         </div>
       </div>
