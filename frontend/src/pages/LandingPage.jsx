@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Header } from "../components/header";
+import { Header } from "../components/Header";
 import { Services } from '../components/Services';
 import JsonData from "../data/data.json";
 import "../App.css";
