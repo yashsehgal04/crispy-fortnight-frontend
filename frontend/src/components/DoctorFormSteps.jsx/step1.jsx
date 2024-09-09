@@ -66,7 +66,8 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
   const verifyEmailCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/emaiVerification/verify-code",
+       `${import.meta.env.VITE_BASE_URL}/api/emaiVerification/verify-code`,
+        
         { email: formData.email, code: enteredCode }
       );
       if (response.data.message === "Verification successful") {

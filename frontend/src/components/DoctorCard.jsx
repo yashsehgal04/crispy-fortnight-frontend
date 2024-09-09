@@ -15,7 +15,8 @@ const DoctorCard = ({ doctor }) => {
   }
 
   // Construct the full URL for the avatar image
-  const baseURL = "http://localhost:5000/uploads/avatar/"; 
+ 
+  const baseURL =  `${import.meta.env.VITE_BASE_URL}/uploads/avatar/`; 
   const isFullURL = doctor.avatar.startsWith('http');
   const avatarUrl = isFullURL ? doctor.avatar : `${baseURL}${doctor.avatar}`;
 
