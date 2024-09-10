@@ -13,6 +13,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css'; 
 
 function Landingpage() {
+  // Initialize hospitals and doctors as empty arrays
   const [landingPageData, setLandingPageData] = useState({});
   const [doctors, setDoctors] = useState([]);
   const [hospitals, setHospitals] = useState([]);
@@ -21,7 +22,7 @@ function Landingpage() {
     const fetchDoctors = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/doctors/all`);
-        setDoctors(response.data.filter(doctor => doctor.isApproved).slice(0, 10)); 
+        setDoctors(Array.isArray(response.data) ? response.data.filter(doctor => doctor.isApproved).slice(0, 10) : []); 
       } catch (error) {
         console.error('Error fetching doctors:', error);
       }
@@ -30,7 +31,7 @@ function Landingpage() {
     const fetchHospitals = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/hospitals/all-hospitals`);
-        setHospitals(response.data.slice(0, 10)); 
+        setHospitals(Array.isArray(response.data) ? response.data.slice(0, 10) : []); 
       } catch (error) {
         console.error('Error fetching hospitals:', error);
       }
@@ -52,7 +53,7 @@ function Landingpage() {
       speed: 500,
       slidesToShow: slidesToShow,
       slidesToScroll: 1,
-      centerMode: false, // Disable center mode for better mobile handling
+      centerMode: false, 
       centerPadding: '0',
       responsive: [
         {
@@ -65,9 +66,9 @@ function Landingpage() {
         {
           breakpoint: 600,
           settings: {
-            slidesToShow: 1, // Show only 1 slide on small screens
+            slidesToShow: 1,
             slidesToScroll: 1,
-            arrows: false, // Hide arrows on small screens to avoid overflow
+            arrows: false, 
           },
         },
       ],

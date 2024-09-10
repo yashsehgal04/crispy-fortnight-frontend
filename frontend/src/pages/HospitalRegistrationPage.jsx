@@ -13,7 +13,7 @@ const HospitalRegistrationForm = () => {
     hospitalName: "",
     hospitalId: "",
     // hospitalImage : null ,
-    category: "",
+    category: [],
     specialization: [], 
     services: [], 
     description: "",
