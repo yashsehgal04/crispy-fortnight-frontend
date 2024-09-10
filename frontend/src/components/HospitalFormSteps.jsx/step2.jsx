@@ -172,7 +172,10 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
 
               {/* Landmark */}
               <div>
-                <label htmlFor="landmark" className="block text-sm font-medium text-gray-700 mb-2">Landmark</label>
+                <label htmlFor="landmark" className="block text-sm font-medium text-gray-700 mb-2">Landmark
+                <span className='text-xs text-gray-600  font-normal'> ( Pin exact location after entering landmark... )
+                </span>  
+                </label>
                 <input
                   type="text"
                   name="landmark"

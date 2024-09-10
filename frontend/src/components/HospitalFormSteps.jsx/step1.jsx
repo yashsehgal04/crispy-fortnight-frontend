@@ -16,7 +16,21 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
   const [selectedCategories, setSelectedCategories] = useState(formData.category || []);
   const [isCategoryOther, setIsCategoryOther] = useState(false);
   const [otherCategory, setOtherCategory] = useState('');
+  const [hospitalType, setHospitalType] = useState(formData.hospitalType || ''); // Added for hospital type
+  const [institutionType, setInstitutionType] = useState(formData.institutionType || ''); // Added for institution type
  
+
+  const handleHospitalTypeChange = (e) => {
+    setHospitalType(e.target.value);
+    setFormData((prevData) => ({ ...prevData, hospitalType: e.target.value }));
+  };
+
+  const handleInstitutionTypeChange = (e) => {
+    setInstitutionType(e.target.value);
+    setFormData((prevData) => ({ ...prevData, institutionType: e.target.value }));
+  };
+
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -59,24 +73,19 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
     setFormData({ ...formData, category: updatedCategories });
   };
 
-  const specializationsList = [
-    'Cardiology', 'Neurology', 'Oncology', 'Orthopedics', 'Pediatrics',
-    'Obstetrics and Gynecology', 'Urology', 'Dermatology', 'Ophthalmology',
-    'Gastroenterology', 'Pulmonology', 'Psychiatry', 'Nephrology', 'Endocrinology',
-    'ENT (Ear, Nose, Throat)', 'Others'
-  ];
 
-  const categoriesList = [
-    'General Hospital', 'Specialty Hospital', 'Multi-Specialty Hospital', 'Clinic', 
+  const specializationsList = [
+    'General Hospital', 'Specialty Hospital', 'Multi-Specialty Hospital', 
     'Diagnostic Center', 'Research and Teaching Hospital', 'Nursing Home', 
-    'Rehabilitation Center', 'Daycare Facility', 'Mental Health Facility'
+    'Rehabilitation Center', 'Daycare Facility', 'Mental Health Facility' , 'Others'
   ];
 
   const servicesList = [
     'Emergency Services', 'Outpatient Services', 'Inpatient Services', 'Intensive Care Unit (ICU)',
     'Diagnostic Imaging (X-ray, MRI, CT Scan)', 'Laboratory Services', 'Pharmacy', 'Surgical Services',
     'Maternity and Childcare', 'Rehabilitation and Physical Therapy', 'Blood Bank', 'Telemedicine',
-    'Vaccination Services', 'Home Healthcare', 'Ambulance Services', 'Others'
+    'Vaccination Services', 'Home Healthcare', 'Ambulance Services', ' CBC test', 'Thyroid Profile test',
+     'Wheel Chair Accessible Entrance And Exit','In-clinic consultations', 'video consultations' , 'Others'
   ];
 
 
@@ -153,6 +162,8 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
     if (selectedServices.length === 0) newErrors.services = 'Please select at least one service.';
     if (!selectedCategories.length) {newErrors.category = 'Please select at least one category.';}
     if (isCategoryOther && !otherCategory) {newErrors.otherCategory = 'Please specify the category.';}
+    if (!hospitalType) newErrors.hospitalType = 'Please select if the hospital is private or government.';
+    if (!institutionType) newErrors.institutionType = 'Please select if the institution is a hospital or clinic.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -172,19 +183,79 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
       <div className="w-full min-h-screen bg-lightGreen flex items-center justify-center rounded-lg shadow-md">
         <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
           <h3 className="text-2xl font-semibold text-middleGreen text-left p-3">
-            Hospital Registration Form
+            Hospital / Clinic Registration Form
           </h3>
-          <div className="space-y-4 text-left p-6">
+          <div className="space-y-4 p-6">
+
+          <div >
+              <label className="block text-sm font-medium text-gray-700 mb-2">Hospital Type</label>
+              <div className="flex space-x-12">
+                <label>
+                  <input
+                    type="radio"
+                    name="hospitalType"
+                    value="Private"
+                    checked={hospitalType === "Private"}
+                    onChange={handleHospitalTypeChange}
+                    className="mr-2"
+                  />
+                  Private
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="hospitalType"
+                    value="Government"
+                    checked={hospitalType === "Government"}
+                    onChange={handleHospitalTypeChange}
+                    className="mr-2"
+                  />
+                  Government
+                </label>
+              </div>
+              {errors.hospitalType && <p className="text-red-500 text-sm mt-1">{errors.hospitalType}</p>}
+            </div>
+
+            {/* Institution Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Institution Type</label>
+              <div className="flex space-x-12">
+                <label>
+                  <input
+                    type="radio"
+                    name="institutionType"
+                    value="Hospital"
+                    checked={institutionType === "Hospital"}
+                    onChange={handleInstitutionTypeChange}
+                    className="mr-2"
+                  />
+                  Hospital
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="institutionType"
+                    value="Clinic"
+                    checked={institutionType === "Clinic"}
+                    onChange={handleInstitutionTypeChange}
+                    className="mr-2"
+                  />
+                  Clinic
+                </label>
+              </div>
+              {errors.institutionType && <p className="text-red-500 text-sm mt-1">{errors.institutionType}</p>}
+            </div>
+
             {/* Hospital Name */}
             <div>
               <label htmlFor="hospitalName" className="block text-sm font-medium text-gray-700 mb-2">
-                Hospital Name
+                Hospital / Clinic Name
               </label>
               <input
                 type="text"
                 id="hospitalName"
                 name="hospitalName"
-                placeholder="Hospital Name"
+                placeholder="Hospital / Clinic Name"
                 value={formData.hospitalName}
                 onChange={handleChange}
                 className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 ${
@@ -196,7 +267,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
 
 
             {/* Category */}
-            <div className="space-y-4 text-left p-6">
+            <div>
       {/* Category Select */}
       <div>
         <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
@@ -379,9 +450,34 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                 </div>
               )}
             </div>
+              {/* hospital image */}
+              <div>
+              <label htmlFor="hospitalImage" className="block text-sm font-medium text-gray-700 mb-2">
+              Upload Hospital / Clinic Image
+              </label>
+              <div className="flex items-center">
+                <label
+                  htmlFor="hospitalImage"
+                  className="bg-docsoGreen text-white px-4 py-2 rounded-md cursor-pointer hover:bg-middleGreen transition duration-300"
+                >
+                  Choose File
+                </label>
+                <input
+                  type="file"
+                  id="hospitalImage"
+                  name="hospitalImage"
+                  onChange={handleChange}
+                  required
+                  className="hidden"
+                />
+                <span className="ml-3 text-gray-700">
+                  {formData.hospitalImage ? formData.hospitalImage.name : 'No file chosen'}
+                </span>
+              </div>
+            </div>
 
             {/* Button */}
-            <div className="flex justify-between">
+            <div className="flex justify-end mt-10">
               <button
                 onClick={handleNextClick}
                 className="px-6 py-3 bg-middleGreen text-white font-semibold rounded-md shadow-sm"

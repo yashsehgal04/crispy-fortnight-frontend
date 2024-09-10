@@ -5,23 +5,6 @@ import axios from 'axios';
 
 const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSelectChange }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [categories, setCategories] = useState([]);
-
-  // // Fetch categories on component mount
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/categories/get-categories`);
-  //       if (Array.isArray(response.data)) {
-  //         setCategories(response.data);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching categories:', error);
-  //     }
-  //   };
-  //   fetchCategories();
-  // }, []);
-
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(formData.category || []);
   const [isCategoryOther, setIsCategoryOther] = useState(false);
@@ -130,33 +113,8 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
               />
             </div>
 
-            {/* Category */}
-            {/* <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                Select Your Category
-              </label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}  // Make sure this is a string
-                onChange={handleChange}
-                required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
-              >
-                <option value="">Select Category</option>
-                {Array.isArray(categories) && categories.length > 0 ? (
-                  categories.map((category, index) => (
-                    <option key={index} value={category.categoryName}>
-                      {category.categoryName}
-                    </option>
-                  ))
-                ) : (
-                  <option disabled>No categories available</option>
-                )}
-              </select>
-            </div> */}
 
-<div className="space-y-4 text-left p-6">
+<div>
       {/* Category Select */}
       <div>
         <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
@@ -300,7 +258,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
             {/* Avatar Upload */}
             <div>
               <label htmlFor="avatar" className="block text-sm font-medium text-gray-700 mb-2">
-                Profile Avatar
+              Upload Profile Image
               </label>
               <div className="flex items-center">
                 <label

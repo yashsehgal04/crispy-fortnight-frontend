@@ -25,10 +25,10 @@ const HomePage = () => {
           <div className="bg-white shadow-xl rounded-lg p-8 m-4 w-full md:w-2/5 cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
             <div className="flex flex-col items-center">
               <img src="https://img.icons8.com/color/96/000000/hospital-room.png" alt="Hospital" className="mb-4 w-24 h-24" />
-              <h2 className="text-2xl font-semibold text-indigo-800 text-center mb-4">Are you a Hospital?</h2>
+              <h2 className="text-2xl font-semibold text-indigo-800 text-center mb-4">Are you a Hospital / Clinic?</h2>
               <p className="text-gray-600 text-center">Partner with us to bring top-notch medical services to more people.</p>
               <div className="mt-4 flex space-x-4">
-                <button className="bg-docsoGreen text-white px-4 py-2 rounded hover:bg-middleGreen transition-colors duration-200" onClick={() => navigate('/hospital-registration')}>Register As a Hospital</button>
+                <button className="bg-docsoGreen text-white px-4 py-2 rounded hover:bg-middleGreen transition-colors duration-200" onClick={() => navigate('/hospital-registration')}>Register As a Hospital / Clinic</button>
               </div>
             </div>
           </div>

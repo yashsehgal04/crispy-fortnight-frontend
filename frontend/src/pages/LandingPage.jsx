@@ -22,6 +22,7 @@ function Landingpage() {
     const fetchDoctors = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/doctors/all`);
+        console.log('Doctors API response:', response.data); 
         setDoctors(Array.isArray(response.data) ? response.data.filter(doctor => doctor.isApproved).slice(0, 10) : []); 
       } catch (error) {
         console.error('Error fetching doctors:', error);
@@ -83,7 +84,7 @@ function Landingpage() {
       
       {/* Doctor and Hospital Section */}
       <div className="w-full max-w-6xl mx-auto overflow-hidden">
-        <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen m-10 border-b border-gray-300">MEET OUR DOCTORS</h2>
+        <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen m-16 border-b border-gray-300">MEET OUR DOCTORS</h2>
         {doctors.length > 0 ? (
           <Slider {...getSliderSettings(doctors)}>
             {doctors.map((doctor) => (
