@@ -1,8 +1,36 @@
 import React from 'react';
+import { useState } from 'react';
 import Navbar from '../Navbar';
 import ProgressBar from '../ProgressBar2'; 
 
-const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => (
+const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => {
+  const [errors, setErrors] = useState({});
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Phone number validation (10 digits)
+    const phonePattern = /^\d{10}$/;
+    if (!phonePattern.test(formData.contactDetails)) {
+      newErrors.contactDetails = 'Phone number must be 10 digits.';
+    }
+
+
+    setErrors(newErrors);
+
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNextClick = (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    
+    if (validateForm()) {
+      handleSubmit(e); // Call handleSubmit to proceed with form submission
+    }
+  };
+
+
+  return(
   <div className="min-h-screen bg-lightGreen">
     <Navbar showLogin={false} showLogout={false} />
     <ProgressBar step={7} totalSteps={7} />
@@ -23,9 +51,10 @@ const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => (
           placeholder="Enter phone number"
           value={formData.contactDetails}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-middleGreen"
-          required
-        />
+          className={`w-full p-3 border ${errors.contactDetails ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+              />
+               {errors.contactDetails && <p className="text-red-500 text-sm mt-1">{errors.contactDetails}</p>}
+          
       </div>
 
       <div className="flex justify-between mt-10">
@@ -38,7 +67,7 @@ const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => (
         </button>
         <button
           type="button"
-          onClick={handleSubmit}
+          onClick={handleNextClick}
           className="py-3 px-6 bg-docsoGreen text-white font-semibold rounded-lg hover:bg-middleGreen focus:outline-none focus:ring-2 focus:ring-middleGreen"
         >
           Submit
@@ -46,6 +75,6 @@ const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => (
       </div>
     </div>
   </div>
-);
+)};
 
 export default Step7;

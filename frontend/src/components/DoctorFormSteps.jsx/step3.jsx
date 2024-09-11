@@ -47,8 +47,15 @@ const Step3 = ({ formData, handleChange,handleChange2, handleNext, handlePrev , 
     if (!formData.city) newErrors.city = 'City is required.';
     if (!formData.address) newErrors.address = 'Address is required.';
     if (!formData.landmark) newErrors.landmark = 'Landmark is required.';
-
+    if (!formData.pincode) {
+      newErrors.pincode = "pincode is required.";
+    } else if (
+      !/^\d{6}$/.test(formData.pincode)  // Check if it's a 4-digit number
+    ){
+      newErrors.pincode = "Enter valid pincode.";
+    }
     setErrors(newErrors);
+    
     return Object.keys(newErrors).length === 0;
   };
 

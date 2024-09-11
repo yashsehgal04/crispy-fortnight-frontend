@@ -41,6 +41,11 @@ export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+  const handleLogoClick = () => {
+    
+      navigate('/');
+    
+  };
 
   return (
     <div>
@@ -50,6 +55,7 @@ export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
           <div className="flex items-center space-x-3">
             <img
               src={logo}
+              onClick={handleLogoClick}
               alt="Docso Logo"
               className="h-12 w-12 rounded-full border-2 border-white"
             />

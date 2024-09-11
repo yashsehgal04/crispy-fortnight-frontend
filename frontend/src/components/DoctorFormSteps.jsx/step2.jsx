@@ -49,8 +49,19 @@ const Step2 = ({ formData, handleChange, handleNext, handlePrev, setFormData }) 
     if (isDegreeOther && !otherDegree) newErrors.otherDegree = 'Other Degree is required.';
     if (!formData.college) newErrors.college = 'College is required.';
     if (isCollegeOther && !formData.otherCollege) newErrors.otherCollege = 'Other College is required.';
-    if (!formData.completionYear) newErrors.completionYear = 'Completion Year is required.';
-    if (!formData.experience) newErrors.experience = 'Experience is required.';
+    if (!formData.completionYear) {
+      newErrors.completionYear = "Completion Year is required.";
+    } else if (
+      !/^\d{4}$/.test(formData.completionYear) || // Check if it's a 4-digit number
+      parseInt(formData.completionYear) < 1900 || // Add a reasonable year range
+      parseInt(formData.completionYear) > new Date().getFullYear()
+    ) {
+      newErrors.completionYear= "Completion Year must be a valid year.";
+    }
+    if (!formData.experience) {newErrors.experience = 'Experience is required.';}
+    else if (parseInt(formData.experience)>100){
+      newErrors.experience = 'Enter valid range.';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

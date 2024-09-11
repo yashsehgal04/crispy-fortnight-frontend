@@ -1,8 +1,31 @@
 import React from 'react';
+import { useState,useEffect } from 'react';
 import Navbar from '../Navbar';
 import ProgressBar from '../ProgressBar';
 
-const Step4 = ({ handleChange, handleNext, handlePrev }) => (
+const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
+  const [errors, setErrors] = useState({});
+  const handleNextClick = () => {
+    if (validateForm()) {
+      handleNext();
+    }
+  };
+
+  const validateForm= () =>{
+    const newErrors = {};
+    if (!formData.identityProof){newErrors.identityProof='Identity Proof is required'}
+    if (formData.identityProof && formData.identityProof.size > 200 * 1024 ) {
+      newErrors.identityProof = 'Identity Proof photo size must not exceed 200 KB.';
+    }
+    if (formData.identityProof2 && formData.identityProof2.size > 200 * 1024 ) {
+      newErrors.identityProof2 = 'Identity Proof 2 photo size must not exceed 200 KB.';
+    }
+    setErrors(newErrors);
+
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
+  };
+  return (
   <div className="min-h-screen flex flex-col bg-lightGreen">
     <Navbar showLogin={false} showLogout={false} showOther={false} />
     <div className="flex-1 flex flex-col items-center">
@@ -36,9 +59,10 @@ const Step4 = ({ handleChange, handleNext, handlePrev }) => (
             id="identityProof"
             name="identityProof"
             onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
+            
+                className={`w-full p-3 border ${errors.identityProof ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
           />
+           {errors.identityProof && <p className="text-red-500 text-sm mt-1">{errors.identityProof}</p>}
           </div>
         </div>
 
@@ -50,9 +74,10 @@ const Step4 = ({ handleChange, handleNext, handlePrev }) => (
             id="identityProof2"
             name="identityProof2"
             onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
-          />
+            className={`w-full p-3 border ${errors.identityProof2 ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+            />
+             {errors.identityProof2 && <p className="text-red-500 text-sm mt-1">{errors.identityProof2}</p>}
+      
         </div>
 
 
@@ -66,7 +91,7 @@ const Step4 = ({ handleChange, handleNext, handlePrev }) => (
           </button>
           <button
             type="button"
-            onClick={handleNext}
+            onClick={handleNextClick}
             className="py-3 px-6 bg-docsoGreen text-white font-semibold rounded-lg hover:bg-middleGreen transition duration-300"
           >
             Next
@@ -75,6 +100,7 @@ const Step4 = ({ handleChange, handleNext, handlePrev }) => (
       </div>
     </div>
   </div>
-);
+  )
+};
 
 export default Step4;

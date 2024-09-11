@@ -236,6 +236,7 @@ const DoctorRegistrationForm = () => {
         )}
         {step === 4 && (
           <Step4
+          formData={formData}
             handleChange={handleChange}
             handleNext={handleNext}
             handlePrev={handlePrev}
@@ -243,6 +244,7 @@ const DoctorRegistrationForm = () => {
         )}
         {step === 5 && (
           <Step5
+            formData={formData}
             handleChange={handleChange}
             handleNext={handleNext}
             handlePrev={handlePrev}
@@ -250,6 +252,7 @@ const DoctorRegistrationForm = () => {
         )}
         {step === 6 && (
           <Step6
+          formData={formData}
             handleChange={handleChange}
             handleNext={handleNext}
             handlePrev={handlePrev}

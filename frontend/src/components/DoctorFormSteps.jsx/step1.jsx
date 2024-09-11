@@ -12,6 +12,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
   const [verificationSent, setVerificationSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [enteredCode, setEnteredCode] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state for async requests
 
   const handleCouncilChange = (e) => {
     const value = e.target.value;
@@ -21,23 +22,59 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
 
   const validateForm = () => {
     const newErrors = {};
+    
+    // Validate email
     if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.registrationNumber)
-      newErrors.registrationNumber = "Registration Number is required.";
+    
+    // Validate registration number length
+    if (!formData.registrationNo) {
+      newErrors.registrationNo = "Registration Number is required.";
+    } else if (formData.registrationNo.length < 6 || formData.registrationNo.length > 10) {
+      newErrors.registrationNo = "Registration Number must be between 6 and 10 characters.";
+    }
+  
+    // Validate registration council
     if (!formData.registrationCouncil)
       newErrors.registrationCouncil = "Registration Council is required.";
+  
+    // If "Others" is selected, validate the otherCouncil field
     if (isOtherCouncil && !formData.otherCouncil)
       newErrors.otherCouncil = "Other Council is required.";
-    if (!formData.registrationYear)
+  
+    // Validate registration year
+    if (!formData.registrationYear) {
       newErrors.registrationYear = "Registration Year is required.";
-
+    } else if (
+      !/^\d{4}$/.test(formData.registrationYear) || // Check if it's a 4-digit number
+      parseInt(formData.registrationYear) < 1900 || // Add a reasonable year range
+      parseInt(formData.registrationYear) > new Date().getFullYear()
+    ) {
+      newErrors.registrationYear = "Registration Year must be a valid 4-digit year.";
+    }
+  
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0; // Return true if there are no errors
   };
+  
 
-  const handleNextClick = () => {
-    if (validateForm()) {
-      handleNext();
+  const handleNextClick = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/doctors/check-email`,
+        { email: formData.email }
+      );
+  
+      if (response.data.message === "Email is available") {
+        if (validateForm()) {
+          handleNext();
+        }
+      }
+    } catch (error) {
+      if (error.response && error.response.data.message === "Email already exists") {
+        setErrors({ email: "Email already exists. Please use a different email." });
+      } else {
+        alert("An error occurred while checking the email.");
+      }
     }
   };
 
@@ -46,28 +83,41 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
       setErrors({ email: "Email is required for verification." });
       return;
     }
-
+    setLoading(true); // Start loading
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/emaiVerification/send-verification-code`,
+      const emailCheck = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/doctors/check-email`,
         { email: formData.email }
       );
-      if (response.data.message === "Verification code sent") {
-        alert("Verification code sent to your email.");
-        setVerificationSent(true);
+  
+      if (emailCheck.data.message === "Email is available") {
+        try {
+          await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/api/emailVerification/send-verification-code`,
+            { email: formData.email }
+          );
+          setVerificationSent(true); // Set verification status
+          alert("Verification code sent to your email.");
+        } catch (error) {
+          console.error(error);
+          alert("Error sending verification code.");
+        }
       }
     } catch (error) {
-      console.error(error);
-      alert("Error sending verification code.");
+      if (error.response && error.response.data.message === "Email already exists") {
+        setErrors({ email: "Email already exists. Please use a different email." });
+      } else {
+        alert("An error occurred while checking the email.");
+      }
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
-  // Verify the code entered by the user
   const verifyEmailCode = async () => {
     try {
       const response = await axios.post(
-       `${import.meta.env.VITE_BASE_URL}/api/emaiVerification/verify-code`,
-        
+        `${import.meta.env.VITE_BASE_URL}/api/emailVerification/verify-code`,
         { email: formData.email, code: enteredCode }
       );
       if (response.data.message === "Verification successful") {
@@ -94,10 +144,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
 
           <div className="space-y-4 text-left w-full p-6">
             <div className="">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Enter Your Email
               </label>
               <input
@@ -123,12 +170,12 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
                 type="button"
                 onClick={sendVerificationCode}
                 className="mt-2 bg-docsoGreen text-white px-4 py-2 rounded-md hover:bg-middleGreen transition duration-300"
+                disabled={loading} // Disable button while loading
               >
-                Send Verification Code
+                {loading ? "Sending..." : "Send Verification Code"} {/* Loading message */}
               </button>
             )}
-
-            {verificationSent && !isVerified && (
+             {verificationSent && !isVerified && (
               <div>
                 <label
                   htmlFor="verificationCode"
@@ -153,7 +200,6 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
                 </button>
               </div>
             )}
-
             <div>
               <label
                 htmlFor="registrationNo"
@@ -281,7 +327,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
             </button>
             <button
               type="button"
-              onClick={handleNext}
+              onClick={handleNextClick}
               className="bg-docsoGreen text-white mb-7 px-6 py-2 mr-6 rounded-md hover:bg-middleGreen transition duration-300"
             >
               Save and go to the Next Section

@@ -273,12 +273,12 @@ const Step7 = ({ formData, handleTimingSlotChange, handleNext, handleChange, han
             htmlFor="description"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Description
+           Add Appointment procedure
           </label>
           <textarea
             id="description"
             name="description"
-            placeholder=" Description  "
+            placeholder="Add Appointment procedure "
             value={formData.description}
             onChange={handleChange}
             className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2`}

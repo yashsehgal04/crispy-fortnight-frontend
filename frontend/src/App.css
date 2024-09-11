@@ -45,7 +45,7 @@
     display: table;
     width: 100%;
     padding: 0;
-    background: url('http://localhost:5000/uploads/images/land.png') center center no-repeat;
+    background: url('https://code-commanders.vercel.app/uploads/images/land.png') center center no-repeat;
     background-color: #e5e5e5;
     -webkit-background-size: cover;
     -moz-background-size: cover;

@@ -3,7 +3,7 @@ import Navbar from '../components/Navbar.jsx';
 import Modal from '../components/Model.jsx';
 import axios from 'axios';
 
-const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSelectChange }) => {
+const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(formData.category || []);
@@ -55,9 +55,34 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
     setFormData({ ...formData, category: updatedCategories });
   };
 
+  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
+    // Date validation (DD-MM-YYYY format)
+    const datePattern = /^([0-2][0-9]|(3)[0-1])-(0[1-9]|1[0-2])-\d{4}$/;
+    if (!datePattern.test(formData.dob)) {
+      newErrors.dob = 'Please enter a valid date in DD-MM-YYYY format.';
+    }
+
+    // Phone number validation (10 digits)
+    const phonePattern = /^\d{10}$/;
+    if (!phonePattern.test(formData.phone)) {
+      newErrors.phone = 'Phone number must be 10 digits.';
+    }
+
+    // Password validation (min 8 characters, 1 special character, 1 digit, 1 letter)
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(formData.password)) {
+      newErrors.password = 'Password must be at least 8 characters long, with at least 1 letter, 1 digit, and 1 special character.';
+    }
+
+    // Avatar file size validation (max 200 KB)
+    if (formData.avatar && formData.avatar.size > 200 * 1024 ) {
+      newErrors.avatar = 'Profile photo size must not exceed 200 KB.';
+    }
+
+    // Category validation
     if (!selectedCategories.length) {
       newErrors.category = 'Please select at least one category.';
     }
@@ -72,9 +97,11 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
     return Object.keys(newErrors).length === 0;
   };
 
-
+  // Handle sign-up button click
   const handleSignUp = () => {
-    setIsModalOpen(true);
+    if (validateForm()) {
+      setIsModalOpen(true);
+    }
   };
 
   const closeModal = () => {
@@ -109,82 +136,79 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
                 value={formData.doctorName}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
+                className={`w-full p-3 border ${errors.doctorName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
+              {errors.doctorName && <p className="text-red-500 text-sm mt-1">{errors.doctorName}</p>}
             </div>
 
-
-<div>
-      {/* Category Select */}
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-          Select Your Category
-        </label>
-        <select
-          id="category"
-          name="category"
-          onChange={(e) => handleCategorySelect(e.target.value)}
-          className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
-            errors.category ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
-          }`}
-        >
-          <option value="">Select Category</option>
-          {Array.isArray(categories) && categories.length > 0 ? (
-            categories.map((category, index) => (
-              <option key={index} value={category.categoryName}>
-                {category.categoryName}
-              </option>
-            ))
-          ) : (
-            <option disabled>No categories available</option>
-          )}
-          <option value="Others">Others</option>
-        </select>
-        {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
-
-        {/* Display selected categories */}
-        <div className="flex flex-wrap mb-2 mt-2">
-          {selectedCategories.map((category, index) => (
-            <div
-              key={index}
-              className="flex items-center px-3 py-1 m-1 text-sm font-semibold bg-lightGreen text-middleGreen rounded-full shadow-sm"
-            >
-              {category}
-              <button
-                type="button"
-                onClick={() => removeCategory(index)}
-                className="ml-2 text-red-600 hover:text-red-900"
+            {/* Category Select */}
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                Select Your Category
+              </label>
+              <select
+                id="category"
+                name="category"
+                onChange={(e) => handleCategorySelect(e.target.value)}
+                className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
+                  errors.category ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
+                }`}
               >
-                ×
-              </button>
+                <option value="">Select Category</option>
+                {Array.isArray(categories) && categories.length > 0 ? (
+                  categories.map((category, index) => (
+                    <option key={index} value={category.categoryName}>
+                      {category.categoryName}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No categories available</option>
+                )}
+                <option value="Others">Others</option>
+              </select>
+              {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+
+              {/* Display selected categories */}
+              <div className="flex flex-wrap mb-2 mt-2">
+                {selectedCategories.map((category, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center px-3 py-1 m-1 text-sm font-semibold bg-lightGreen text-middleGreen rounded-full shadow-sm"
+                  >
+                    {category}
+                    <button
+                      type="button"
+                      onClick={() => removeCategory(index)}
+                      className="ml-2 text-red-600 hover:text-red-900"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Input for Other Category */}
+              {isCategoryOther && (
+                <div className="flex mt-4">
+                  <input
+                    type="text"
+                    value={otherCategory}
+                    onChange={(e) => setOtherCategory(e.target.value)}
+                    placeholder="Specify Category"
+                    className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen flex-grow mr-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleOtherCategorySubmit}
+                    className="px-4 py-2 bg-middleGreen text-white rounded-md shadow-sm"
+                  >
+                    Add
+                  </button>
+                </div>
+              )}
             </div>
-          ))}
-        </div>
 
-        {/* Input for Other Category */}
-        {isCategoryOther && (
-          <div className="flex mt-4">
-            <input
-              type="text"
-              value={otherCategory}
-              onChange={(e) => setOtherCategory(e.target.value)}
-              placeholder="Specify Category"
-              className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen flex-grow mr-2"
-            />
-            <button
-              type="button"
-              onClick={handleOtherCategorySubmit}
-              className="px-4 py-2 bg-middleGreen text-white rounded-md shadow-sm"
-            >
-              Add
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-
-
-            {/* Other form fields */}
+            {/* D.O.B */}
             <div>
               <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-2">
                 D.O.B.
@@ -197,12 +221,14 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
                 value={formData.dob}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
+                className={`w-full p-3 border ${errors.dob ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
+              {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
             </div>
 
-            {/* Gender */}
-            <div>
+
+    {/* Gender */}
+    <div>
               <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
                 Select Your Gender
               </label>
@@ -221,21 +247,23 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
               </select>
             </div>
 
+            
             {/* Phone Number */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone No.
+                Phone Number
               </label>
               <input
                 type="text"
                 id="phone"
                 name="phone"
-                placeholder="Enter your Phone No"
+                placeholder="Mobile Number"
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
+                className={`w-full p-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
             </div>
 
             {/* Password */}
@@ -251,50 +279,43 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext, handleMultiSe
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
+                className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
 
-            {/* Avatar Upload */}
+            {/* Profile Photo */}
             <div>
               <label htmlFor="avatar" className="block text-sm font-medium text-gray-700 mb-2">
-              Upload Profile Image
+                Upload Profile Photo
               </label>
-              <div className="flex items-center">
-                <label
-                  htmlFor="avatar"
-                  className="bg-docsoGreen text-white px-4 py-2 rounded-md cursor-pointer hover:bg-middleGreen transition duration-300"
-                >
-                  Choose File
-                </label>
-                <input
-                  type="file"
-                  id="avatar"
-                  name="avatar"
-                  onChange={handleFileChange}
-                  required
-                  className="hidden"
-                />
-                <span className="ml-3 text-gray-700">
-                  {formData.avatar ? formData.avatar.name : 'No file chosen'}
-                </span>
-              </div>
+              <input
+                type="file"
+                id="avatar"
+                name="avatar"
+                onChange={handleFileChange}
+                required
+                className={`w-full p-3 border ${errors.avatar ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+              />
+              {errors.avatar && <p className="text-red-500 text-sm mt-1">{errors.avatar}</p>}
             </div>
           </div>
 
-          {/* Sign Up Button */}
-          <div className="mt-6 flex justify-end">
+          {/* Buttons */}
+          <div className="flex items-center justify-between space-x-2 mt-5">
+            
             <button
               type="button"
               onClick={handleSignUp}
-              className="bg-docsoGreen text-white px-6 py-2 rounded-md hover:bg-middleGreen transition duration-300"
+              className="w-full py-2 px-4 bg-middleGreen text-white rounded-md shadow-md hover:bg-docsoGreen"
             >
-              Sign Up As a Doctor
+              Sign Up
             </button>
           </div>
 
           {/* Modal */}
-          <Modal isOpen={isModalOpen} onClose={closeModal}>
+             {/* Modal */}
+             <Modal isOpen={isModalOpen} onClose={closeModal}>
             <h2 className="text-lg font-medium text-gray-900 mb-4">Sign Up Successful</h2>
             <p className="text-gray-700">Your sign-up was successful. You will be redirected to complete your profile.</p>
             <div className="mt-4 flex justify-end">

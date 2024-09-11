@@ -1,8 +1,29 @@
 import React from 'react';
 import Navbar from '../Navbar';
+import { useState,useEffect } from 'react';
 import ProgressBar from '../ProgressBar';
 
-const Step6 = ({ handleChange, handleNext, handlePrev }) => (
+const Step6 = ({ handleChange, handleNext, handlePrev,formData }) => {
+
+  const [errors, setErrors] = useState({});
+  const handleNextClick = () => {
+    if (validateForm()) {
+      handleNext();
+    }
+  };
+
+  const validateForm= () =>{
+    const newErrors = {};
+    if (!formData.establishmentProof){newErrors.establishmentProof='Establishment Registration Proof is required'}
+    if (formData.establishmentProof && formData.establishmentProof.size > 200 * 1024 ) {
+      newErrors.establishmentProof = 'Establishment Registration Proof photo size must not exceed 200 KB.';
+    }
+    setErrors(newErrors);
+
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
+  };
+  return(
   <div className="min-h-screen flex flex-col bg-lightGreen">
     <Navbar showLogin={false} showLogout={false} showOther={false} />
     <div className="flex-1 flex flex-col items-center">
@@ -40,8 +61,9 @@ const Step6 = ({ handleChange, handleNext, handlePrev }) => (
               name="establishmentProof"
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
-            />
+              className={`w-full p-3 border ${errors.establishmentProof ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+              />
+               {errors.establishmentProof && <p className="text-red-500 text-sm mt-1">{errors.establishmentProof}</p>}
           </div>
         </div>
 
@@ -55,7 +77,7 @@ const Step6 = ({ handleChange, handleNext, handlePrev }) => (
           </button>
           <button
             type="button"
-            onClick={handleNext}
+            onClick={handleNextClick}
             className="bg-docsoGreen text-white px-6 py-2 rounded-md hover:bg-middleGreen transition duration-300"
           >
             Next
@@ -64,6 +86,6 @@ const Step6 = ({ handleChange, handleNext, handlePrev }) => (
       </div>
     </div>
   </div>
-);
+)};
 
 export default Step6;

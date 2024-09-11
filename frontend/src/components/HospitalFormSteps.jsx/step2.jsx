@@ -42,7 +42,6 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
   const validateForm = () => {
     const newErrors = {};
     if (!formData.hospitalId) newErrors.hospitalId = 'Hospital ID is required.';
-    if (!formData.establishmentName) newErrors.establishmentName = 'Establishment name is required.';
     if (!formData.state) newErrors.state = 'State is required.';
     if (!formData.city) newErrors.city = 'City is required.';
     if (!formData.address) newErrors.address = 'Address is required.';
@@ -71,11 +70,11 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
             <div className="w-full lg:w-1/2 p-6 space-y-4 text-left">
               {/* Hospital ID */}
               <div>
-                <label htmlFor="hospitalId" className="block text-sm font-medium text-gray-700 mb-2">Enter Your Hospital Id</label>
+                <label htmlFor="hospitalId" className="block text-sm font-medium text-gray-700 mb-2">Enter Your Hospital / Clinic Id</label>
                 <input
                   type="text"
                   name="hospitalId"
-                  placeholder="Hospital Unique ID"
+                  placeholder="Hospital / Clinic Unique ID"
                   value={formData.hospitalId}
                   onChange={handleChange}
                   required
@@ -86,23 +85,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
                 {errors.hospitalId && <p className="text-red-500 text-sm mt-1">{errors.hospitalId}</p>}
               </div>
 
-              {/* Establishment Name */}
-              <div>
-                <label htmlFor="establishmentName" className="block text-sm font-medium text-gray-700 mb-2">Enter Name of Establishment</label>
-                <input
-                  type="text"
-                  name="establishmentName"
-                  placeholder="Establishment Name"
-                  value={formData.establishmentName}
-                  onChange={handleChange}
-                  required
-                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
-                    errors.establishmentName ? 'border-red-500 focus:ring-red-500' : 'border-green-300 focus:ring-docsoGreen'
-                  }`}
-                />
-                {errors.establishmentName && <p className="text-red-500 text-sm mt-1">{errors.establishmentName}</p>}
-              </div>
-
+             
               {/* State */}
               <div className="mb-4">
                 <label htmlFor="state" className="block text-gray-700 font-semibold mb-2">State</label>
