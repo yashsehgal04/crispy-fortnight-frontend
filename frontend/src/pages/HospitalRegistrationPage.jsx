@@ -11,7 +11,8 @@ import Step7 from "../components/HospitalFormSteps.jsx/step7";
 const HospitalRegistrationForm = () => {
   const [formData, setFormData] = useState({
     hospitalName: "",
-    hospitalId: "",
+    // hospitalId: "",
+    email:'',
     hospitalImage : null ,
     category: [],
     specialization: [], 

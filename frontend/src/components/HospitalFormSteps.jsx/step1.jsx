@@ -164,7 +164,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
     if (isCategoryOther && !otherCategory) {newErrors.otherCategory = 'Please specify the category.';}
     if (!hospitalType) newErrors.hospitalType = 'Please select if the hospital is private or government.';
     if (!institutionType) newErrors.institutionType = 'Please select if the institution is a hospital or clinic.';
-
+    if (!formData.email) newErrors.email = "Email is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -264,10 +264,31 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
               />
               {errors.hospitalName && <p className="text-red-500 text-sm mt-1">{errors.hospitalName}</p>}
             </div>
+      
+            <div >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Your Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
+                  errors.email
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-middleGreen"
+                }`}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
 
-
-            {/* Category */}
-            <div>
+      {/* Category */}
+      <div>
       {/* Category Select */}
       <div>
         <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">

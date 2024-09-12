@@ -29,8 +29,8 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
     // Validate registration number length
     if (!formData.registrationNo) {
       newErrors.registrationNo = "Registration Number is required.";
-    } else if (formData.registrationNo.length < 6 || formData.registrationNo.length > 10) {
-      newErrors.registrationNo = "Registration Number must be between 6 and 10 characters.";
+    } else if (formData.registrationNo.length < 6 || formData.registrationNo.length > 20) {
+      newErrors.registrationNo = "Registration Number must be between 6 and 20 characters.";
     }
   
     // Validate registration council

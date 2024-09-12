@@ -49,7 +49,7 @@ export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
 
   return (
     <div>
-      <nav className="bg-docsoGreen p-4 shadow-lg">
+      <nav className="bg-docsoGreen p-2 shadow-lg">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo Section */}
           <div className="flex items-center space-x-3">
@@ -57,7 +57,7 @@ export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
               src={logo}
               onClick={handleLogoClick}
               alt="Docso Logo"
-              className="h-12 w-12 rounded-full border-2 border-white"
+              className="h-20 w-20 rounded-full border-2 border-white"
             />
           </div>
 
@@ -122,14 +122,15 @@ export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
 
           {/* Admin & Register Buttons (Desktop View) */}
           <div className="hidden md:flex space-x-4">
-            {showAdmin && (
+            
               <button
                 className="text-docsoGreen bg-white px-4 py-2 rounded-md hover:bg-docsoGreen hover:text-white transition duration-300"
                 onClick={handleAdminClick}
               >
                 Admin
               </button>
-            )}
+            
+            
             {showR && (
               <button
                 className="text-white border-2 border-white px-4 py-2 rounded-md hover:bg-white hover:text-docsoGreen transition duration-300"

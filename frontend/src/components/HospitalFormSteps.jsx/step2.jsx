@@ -41,7 +41,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
   // Validate form fields
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.hospitalId) newErrors.hospitalId = 'Hospital ID is required.';
+    // if (!formData.hospitalId) newErrors.hospitalId = 'Hospital ID is required.';
     if (!formData.state) newErrors.state = 'State is required.';
     if (!formData.city) newErrors.city = 'City is required.';
     if (!formData.address) newErrors.address = 'Address is required.';
@@ -68,7 +68,8 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
           <h3 className="text-2xl font-semibold text-middleGreen text-left p-3">Establishment Basic Details</h3>
           <div className="min-w-full flex flex-col lg:flex-row">
             <div className="w-full lg:w-1/2 p-6 space-y-4 text-left">
-              {/* Hospital ID */}
+            
+              {/* Hospital ID
               <div>
                 <label htmlFor="hospitalId" className="block text-sm font-medium text-gray-700 mb-2">Enter Your Hospital / Clinic Id</label>
                 <input
@@ -83,7 +84,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
                   }`}
                 />
                 {errors.hospitalId && <p className="text-red-500 text-sm mt-1">{errors.hospitalId}</p>}
-              </div>
+              </div> */}
 
              
               {/* State */}
