@@ -13,8 +13,6 @@ const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => {
     if (!phonePattern.test(formData.contactDetails)) {
       newErrors.contactDetails = 'Phone number must be 10 digits.';
     }
-
-
     setErrors(newErrors);
 
     // Return true if there are no errors

@@ -59,24 +59,34 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
 
   const handleNextClick = async () => {
     try {
-      const response = await axios.post(
+      // Check if email exists
+      const emailResponse = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/doctors/check-email`,
         { email: formData.email }
       );
   
-      if (response.data.message === "Email is available") {
-        if (validateForm()) {
-          handleNext();
-        }
+      if (emailResponse.data.message !== "Email is available") {
+        setErrors({ email: "Email already exists. Please use a different email." });
+        return; // Stop further execution if email exists
+      }
+  
+      // If both email and phone are available, proceed with form validation
+      if (validateForm()) {
+        handleNext();
       }
     } catch (error) {
-      if (error.response && error.response.data.message === "Email already exists") {
-        setErrors({ email: "Email already exists. Please use a different email." });
+      if (error.response) {
+        if (error.response.data.message === "Email already exists") {
+          setErrors({ email: "Email already exists. Please use a different email." });
+        } else {
+          alert("An error occurred while checking the email.");
+        }
       } else {
-        alert("An error occurred while checking the email.");
+        alert("An unknown error occurred.");
       }
     }
   };
+  
 
   const sendVerificationCode = async () => {
     if (!formData.email) {

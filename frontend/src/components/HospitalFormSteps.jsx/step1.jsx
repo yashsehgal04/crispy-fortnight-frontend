@@ -165,6 +165,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
     if (!hospitalType) newErrors.hospitalType = 'Please select if the hospital is private or government.';
     if (!institutionType) newErrors.institutionType = 'Please select if the institution is a hospital or clinic.';
     if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.hospitalImage) newErrors.hospitalImage = "Image is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -495,6 +496,8 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                   {formData.hospitalImage ? formData.hospitalImage.name : 'No file chosen'}
                 </span>
               </div>
+              {errors.hospitalImage && <p className="text-red-500 text-sm mt-1">{errors.hospitalImage}</p>}
+
             </div>
 
             {/* Button */}

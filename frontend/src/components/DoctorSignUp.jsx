@@ -61,17 +61,20 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
 
     // Date validation (DD-MM-YYYY format)
     const datePattern = /^([0-2][0-9]|(3)[0-1])-(0[1-9]|1[0-2])-\d{4}$/;
+    
     if (!datePattern.test(formData.dob)) {
       newErrors.dob = 'Please enter a valid date in DD-MM-YYYY format.';
     }
 
     // Phone number validation (10 digits)
+
     const phonePattern = /^\d{10}$/;
     if (!phonePattern.test(formData.phone)) {
       newErrors.phone = 'Phone number must be 10 digits.';
     }
 
     // Password validation (min 8 characters, 1 special character, 1 digit, 1 letter)
+
     const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordPattern.test(formData.password)) {
       newErrors.password = 'Password must be at least 8 characters long, with at least 1 letter, 1 digit, and 1 special character.';
@@ -98,9 +101,35 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
   };
 
   // Handle sign-up button click
-  const handleSignUp = () => {
-    if (validateForm()) {
-      setIsModalOpen(true);
+  const handleSignUp = async () => {
+    try{
+      // Check if phone exists
+      const phoneResponse = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/doctors/check-phone`,
+        { phone: formData.phone }
+      );
+  
+      if (phoneResponse.data.message !== "Phone is available") {
+        setErrors({ phone: "Phone number already exists. Please use a different phone number." });
+        return; // Stop further execution if phone exists
+      }
+  
+      // If both email and phone are available, proceed with form validation
+      if (validateForm()) {
+        setIsModalOpen(true);
+      }
+
+    }catch(error){
+      if (error.response) {
+        if (error.response.data.message === "Phone already exists") {
+          setErrors({ phone: "Phone number already exists. Please use a different phone number." });
+      }else {
+        alert("An error occurred while checking the email.");
+      }
+    } else {
+      alert("An unknown error occurred.");
+    }
+
     }
   };
 
