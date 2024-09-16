@@ -25,26 +25,18 @@ const Step7 = ({ formData, handleTimingSlotChange, handleNext, handleChange, han
     handleTimingSlotChange(timings);
   }, [timings]);
 
-  // const validateForm = () => {
-  //   const newErrors = {}
-  //   if (!formData.description) newErrors.description = 'Description is required.';
-
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
+ 
 
 
   const handleAddTimingSlot = () => {
-    const newErrors = { ...errors }; // Copy existing errors
-    
-    // Check if any timing slot fields are empty
+    const newErrors = { ...errors }; 
     if (selectedDays.length === 0) {
       newErrors.selectedDays = "Please select at least one day.";
     } else {
-      delete newErrors.selectedDays; // Clear the error for selectedDays if days are selected
+      delete newErrors.selectedDays; 
     }
   
-    const lastTiming = timings[timings.length - 1] || {}; // Get the last timing slot
+    const lastTiming = timings[timings.length - 1] || {}; 
   
     // Validate each timing field (morning start, morning end, afternoon start, afternoon end)
     if (!lastTiming.morningStart) {
@@ -78,7 +70,7 @@ const Step7 = ({ formData, handleTimingSlotChange, handleNext, handleChange, han
       ]);
     }
   
-    setErrors(newErrors); // Update the errors state
+    setErrors(newErrors);
   };
   
 

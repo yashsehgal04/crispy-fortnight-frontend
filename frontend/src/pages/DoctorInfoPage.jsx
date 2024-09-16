@@ -45,7 +45,7 @@ const DoctorInfo = () => {
           <div className="bg-white shadow-lg rounded-lg p-6">
             <div className="flex flex-col md:flex-row items-center md:items-start mb-6 gap-40">
               <img
-                src={`${import.meta.env.VITE_BASE_URL}/uploads/avatar/${doctor.avatar}`}
+                src={doctor.avatar}
                 alt={doctor.doctorName}
                 className=" m-4 w-52 h-60 rounded-md object-cover mb-4 md:mb-0 md:mr-6"
               />

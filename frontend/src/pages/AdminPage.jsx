@@ -223,10 +223,10 @@ const AdminPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredDoctors.map((doctor) => (
+                {Array.isArray(filteredDoctors) && filteredDoctors.map((doctor) => (
                   <tr key={doctor._id}>
                     <td className="py-2 px-4 border-b border-r border-gray-300">
-                      {doctor.registrationNumber}
+                      {doctor.registrationNo}
                     </td>
                     <td
                       className="py-2 px-4 border-b border-r border-gray-300 cursor-pointer hover:text-blue-500"

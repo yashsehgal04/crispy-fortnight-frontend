@@ -2,6 +2,7 @@ import React from 'react';
 import { useState,useEffect } from 'react';
 import Navbar from '../Navbar';
 import ProgressBar from '../ProgressBar';
+import axios from 'axios'
 
 const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
   const [errors, setErrors] = useState({});
@@ -11,15 +12,69 @@ const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
     }
   };
 
+  const handleFileChange = async (e, fieldName) => {
+    const files = e.target.files; 
+  
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+  
+      if (file) {
+        const reader = new FileReader();
+  
+        reader.onloadend = () => {
+          if (reader.readyState === 2) {
+            if (fieldName === "identityProof1") {
+              setIdentityProof((prev) => [...prev, reader.result]);
+            } else if (fieldName === "identityProof2") {
+              setIdentityProof2((prev) => [...prev, reader.result]);
+            }
+          }
+        };
+  
+        reader.readAsDataURL(file);
+  
+        // Upload the file to Cloudinary
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "ml_default"); 
+  
+        try {
+          const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/dhvcgixeu/image/upload",
+            formData
+          );
+  
+          const uploadedUrl = response.data.secure_url; 
+          console.log("Image uploaded successfully:", uploadedUrl);
+  
+          // Update the formData with the uploaded image URL
+          handleChange({
+            target: {
+              name: fieldName, 
+              value: uploadedUrl, 
+            },
+          });
+        } catch (error) {
+          console.error("Error uploading image to Cloudinary:", error.message);
+        }
+      }
+    }
+  };
+  
+  
+
   const validateForm= () =>{
     const newErrors = {};
-    if (!formData.identityProof){newErrors.identityProof='Identity Proof is required'}
-    if (formData.identityProof && formData.identityProof.size > 200 * 1024 ) {
-      newErrors.identityProof = 'Identity Proof photo size must not exceed 200 KB.';
+
+    if (formData.identityProof1 && formData.identityProof1.size > 200 * 1024 ) {
+      newErrors.identityProof1 = 'Identity Proof 1 photo size must not exceed 200 KB.';
     }
+
     if (formData.identityProof2 && formData.identityProof2.size > 200 * 1024 ) {
       newErrors.identityProof2 = 'Identity Proof 2 photo size must not exceed 200 KB.';
     }
+
+   
     setErrors(newErrors);
 
     // Return true if there are no errors
@@ -56,9 +111,9 @@ const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
           <div  method="POST" enctype="multipart/form-data" action = "/upload">
           <input
             type="file"
-            id="identityProof"
-            name="identityProof"
-            onChange={handleChange}
+            id="identityProof1"
+            name="identityProof1"
+            onChange={(e) => handleFileChange(e, "identityProof1")}
             
                 className={`w-full p-3 border ${errors.identityProof ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
           />
@@ -73,7 +128,7 @@ const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
             type="file"
             id="identityProof2"
             name="identityProof2"
-            onChange={handleChange}
+            onChange={(e) => handleFileChange(e, "identityProof2")}
             className={`w-full p-3 border ${errors.identityProof2 ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
             />
              {errors.identityProof2 && <p className="text-red-500 text-sm mt-1">{errors.identityProof2}</p>}

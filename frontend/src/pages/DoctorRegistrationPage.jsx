@@ -41,7 +41,7 @@ const DoctorRegistrationForm = () => {
     latitude: '',
     longitude: '',
     email:'',
-    identityProof: null,
+    identityProof1: null,
     identityProof2: null,
     medicalRegistrationProof: null,
     establishmentProof: null,

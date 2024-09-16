@@ -14,11 +14,7 @@ const DoctorCard = ({ doctor }) => {
     return null;
   }
 
-  // Construct the full URL for the avatar image
- 
-  const baseURL =  `${import.meta.env.VITE_BASE_URL}/uploads/avatar/`; 
-  const isFullURL = doctor.avatar.startsWith('http');
-  const avatarUrl = isFullURL ? doctor.avatar : `${baseURL}${doctor.avatar}`;
+
 
   return (
     <div
@@ -27,7 +23,7 @@ const DoctorCard = ({ doctor }) => {
     >
       <div className="flex items-center mb-4">
         <img
-          src={avatarUrl}
+          src={doctor.avatar}
           alt={doctor.doctorName}
           className="w-20 h-20 rounded-full object-cover mr-4"
         />

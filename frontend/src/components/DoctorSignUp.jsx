@@ -1,26 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar.jsx';
-import Modal from '../components/Model.jsx';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import Navbar from "../components/Navbar.jsx";
+import Modal from "../components/Model.jsx";
+import axios from "axios";
 
 const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState(formData.category || []);
+  const [selectedCategories, setSelectedCategories] = useState(
+    formData.category || []
+  );
   const [isCategoryOther, setIsCategoryOther] = useState(false);
-  const [otherCategory, setOtherCategory] = useState('');
+  const [otherCategory, setOtherCategory] = useState("");
   const [errors, setErrors] = useState({});
 
   // Fetch categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/categories/get-categories`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/categories/get-categories`
+        );
         if (Array.isArray(response.data)) {
           setCategories(response.data);
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       }
     };
     fetchCategories();
@@ -45,7 +49,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
       setFormData({ ...formData, category: updatedCategories });
     }
     setIsCategoryOther(false);
-    setOtherCategory('');
+    setOtherCategory("");
   };
 
   // Remove category
@@ -61,37 +65,39 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
 
     // Date validation (DD-MM-YYYY format)
     const datePattern = /^([0-2][0-9]|(3)[0-1])-(0[1-9]|1[0-2])-\d{4}$/;
-    
+
     if (!datePattern.test(formData.dob)) {
-      newErrors.dob = 'Please enter a valid date in DD-MM-YYYY format.';
+      newErrors.dob = "Please enter a valid date in DD-MM-YYYY format.";
     }
 
     // Phone number validation (10 digits)
 
     const phonePattern = /^\d{10}$/;
     if (!phonePattern.test(formData.phone)) {
-      newErrors.phone = 'Phone number must be 10 digits.';
+      newErrors.phone = "Phone number must be 10 digits.";
     }
 
     // Password validation (min 8 characters, 1 special character, 1 digit, 1 letter)
 
-    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordPattern =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordPattern.test(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters long, with at least 1 letter, 1 digit, and 1 special character.';
+      newErrors.password =
+        "Password must be at least 8 characters long, with at least 1 letter, 1 digit, and 1 special character.";
     }
 
     // Avatar file size validation (max 200 KB)
-    if (formData.avatar && formData.avatar.size > 200 * 1024 ) {
-      newErrors.avatar = 'Profile photo size must not exceed 200 KB.';
+    if (formData.avatar && formData.avatar.size > 200 * 1024) {
+      newErrors.avatar = "Profile photo size must not exceed 200 KB.";
     }
 
     // Category validation
     if (!selectedCategories.length) {
-      newErrors.category = 'Please select at least one category.';
+      newErrors.category = "Please select at least one category.";
     }
 
     if (isCategoryOther && !otherCategory) {
-      newErrors.otherCategory = 'Please specify the category.';
+      newErrors.otherCategory = "Please specify the category.";
     }
 
     setErrors(newErrors);
@@ -102,34 +108,38 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
 
   // Handle sign-up button click
   const handleSignUp = async () => {
-    try{
+    try {
       // Check if phone exists
       const phoneResponse = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/doctors/check-phone`,
         { phone: formData.phone }
       );
-  
+
       if (phoneResponse.data.message !== "Phone is available") {
-        setErrors({ phone: "Phone number already exists. Please use a different phone number." });
+        setErrors({
+          phone:
+            "Phone number already exists. Please use a different phone number.",
+        });
         return; // Stop further execution if phone exists
       }
-  
+
       // If both email and phone are available, proceed with form validation
       if (validateForm()) {
         setIsModalOpen(true);
       }
-
-    }catch(error){
+    } catch (error) {
       if (error.response) {
         if (error.response.data.message === "Phone already exists") {
-          setErrors({ phone: "Phone number already exists. Please use a different phone number." });
-      }else {
-        alert("An error occurred while checking the email.");
+          setErrors({
+            phone:
+              "Phone number already exists. Please use a different phone number.",
+          });
+        } else {
+          alert("An error occurred while checking the email.");
+        }
+      } else {
+        alert("An unknown error occurred.");
       }
-    } else {
-      alert("An unknown error occurred.");
-    }
-
     }
   };
 
@@ -138,8 +148,44 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
     handleNext();
   };
 
-  const handleFileChange = (e) => {
-    handleChange(e);
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        if (reader.readyState === 2) {
+          setAvatar(reader.result);
+        }
+      };
+
+      reader.readAsDataURL(file);
+
+      // Upload the file to Cloudinary
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ml_default"); // Your unsigned upload preset
+
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dhvcgixeu/image/upload",
+          formData
+        );
+
+        const uploadedUrl = response.data.secure_url; // Get the uploaded image URL
+        console.log("Image uploaded successfully:", uploadedUrl);
+
+        // Update the formData to store the uploaded image URL
+        handleChange({
+          target: {
+            name: "avatar",
+            value: uploadedUrl,
+          },
+        });
+      } catch (error) {
+        console.error("Error uploading image to Cloudinary:", error.message);
+      }
+    }
   };
 
   return (
@@ -154,7 +200,10 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
           <div className="space-y-4 text-left">
             {/* Doctor Name */}
             <div>
-              <label htmlFor="doctorName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="doctorName"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Enter Name
               </label>
               <input
@@ -165,14 +214,21 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 value={formData.doctorName}
                 onChange={handleChange}
                 required
-                className={`w-full p-3 border ${errors.doctorName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+                className={`w-full p-3 border ${
+                  errors.doctorName ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
-              {errors.doctorName && <p className="text-red-500 text-sm mt-1">{errors.doctorName}</p>}
+              {errors.doctorName && (
+                <p className="text-red-500 text-sm mt-1">{errors.doctorName}</p>
+              )}
             </div>
 
             {/* Category Select */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Select Your Category
               </label>
               <select
@@ -180,7 +236,9 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 name="category"
                 onChange={(e) => handleCategorySelect(e.target.value)}
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.category ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
+                  errors.category
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-middleGreen"
                 }`}
               >
                 <option value="">Select Category</option>
@@ -195,7 +253,9 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 )}
                 <option value="Others">Others</option>
               </select>
-              {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-1">{errors.category}</p>
+              )}
 
               {/* Display selected categories */}
               <div className="flex flex-wrap mb-2 mt-2">
@@ -239,7 +299,10 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
 
             {/* D.O.B */}
             <div>
-              <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="dob"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 D.O.B.
               </label>
               <input
@@ -250,21 +313,27 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 value={formData.dob}
                 onChange={handleChange}
                 required
-                className={`w-full p-3 border ${errors.dob ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+                className={`w-full p-3 border ${
+                  errors.dob ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
-              {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
+              {errors.dob && (
+                <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
+              )}
             </div>
 
-
-    {/* Gender */}
-    <div>
-              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
+            {/* Gender */}
+            <div>
+              <label
+                htmlFor="gender"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Select Your Gender
               </label>
               <select
                 id="gender"
                 name="gender"
-                value={formData.gender}  // Make sure this is a string
+                value={formData.gender} // Make sure this is a string
                 onChange={handleChange}
                 required
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
@@ -276,10 +345,12 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
               </select>
             </div>
 
-            
             {/* Phone Number */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Phone Number
               </label>
               <input
@@ -290,14 +361,21 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className={`w-full p-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+                className={`w-full p-3 border ${
+                  errors.phone ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              )}
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <input
@@ -308,14 +386,21 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+                className={`w-full p-3 border ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
             </div>
 
             {/* Profile Photo */}
             <div>
-              <label htmlFor="avatar" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="avatar"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Upload Profile Photo
               </label>
               <input
@@ -324,15 +409,18 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 name="avatar"
                 onChange={handleFileChange}
                 required
-                className={`w-full p-3 border ${errors.avatar ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
+                className={`w-full p-3 border ${
+                  errors.avatar ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
-              {errors.avatar && <p className="text-red-500 text-sm mt-1">{errors.avatar}</p>}
+              {errors.avatar && (
+                <p className="text-red-500 text-sm mt-1">{errors.avatar}</p>
+              )}
             </div>
           </div>
 
           {/* Buttons */}
           <div className="flex items-center justify-between space-x-2 mt-5">
-            
             <button
               type="button"
               onClick={handleSignUp}
@@ -343,10 +431,15 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
           </div>
 
           {/* Modal */}
-             {/* Modal */}
-             <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Sign Up Successful</h2>
-            <p className="text-gray-700">Your sign-up was successful. You will be redirected to complete your profile.</p>
+          {/* Modal */}
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <h2 className="text-lg font-medium text-gray-900 mb-4">
+              Sign Up Successful
+            </h2>
+            <p className="text-gray-700">
+              Your sign-up was successful. You will be redirected to complete
+              your profile.
+            </p>
             <div className="mt-4 flex justify-end">
               <button
                 onClick={closeModal}
