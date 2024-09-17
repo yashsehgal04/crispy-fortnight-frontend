@@ -2,18 +2,59 @@ import React from 'react';
 import { useState,useEffect } from 'react';
 import Navbar from '../Navbar';
 import ProgressBar from '../ProgressBar';
+import axios from 'axios';
 
 const Step5 = ({ handleChange, handleNext, handlePrev,formData }) => {
   const [errors, setErrors] = useState({});
+  const [medicalRegistrationProof, setMedicalRegistrationProof] = useState(""); 
   const handleNextClick = () => {
     if (validateForm()) {
       handleNext();
     }
   };
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
 
+      reader.onloadend = () => {
+        if (reader.readyState === 2) {
+          setMedicalRegistrationProof(reader.result);
+        }
+      };
+
+      reader.readAsDataURL(file);
+
+      // Upload the file to Cloudinary
+      const formData1 = new FormData();
+      formData1.append("file", file);
+      formData1.append("upload_preset", "ml_default"); // Your unsigned upload preset
+
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dhvcgixeu/image/upload",
+          formData1
+        );
+
+        const uploadedUrl = response.data.secure_url; // Get the uploaded image URL
+        console.log("Image uploaded successfully:", uploadedUrl);
+
+        // Update the formData to store the uploaded image URL
+        handleChange({
+          target: {
+            name: "medicalRegistrationProof",
+            value: uploadedUrl,
+          },
+         
+        });
+      } catch (error) {
+        console.error("Error uploading image to Cloudinary:", error.message);
+      }
+    }
+  };
   const validateForm= () =>{
     const newErrors = {};
-    if (!formData.medicalRegistrationProof){newErrors.medicalRegistrationProof='Medical Registration Proof is required'}
+    // if (!formData.medicalRegistrationProof){newErrors.medicalRegistrationProof='Medical Registration Proof is required'}
     if (formData.medicalRegistrationProof && formData.medicalRegistrationProof.size > 200 * 1024 ) {
       newErrors.medicalRegistrationProof = 'Medical Registration Proof photo size must not exceed 200 KB.';
     }
@@ -59,7 +100,7 @@ const Step5 = ({ handleChange, handleNext, handlePrev,formData }) => {
               type="file"
               id="medicalRegistrationProof"
               name="medicalRegistrationProof"
-              onChange={handleChange}
+              onChange={handleFileChange}
               className={`w-full p-3 border ${errors.medicalRegistrationProof ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
                {errors.medicalRegistrationProof && <p className="text-red-500 text-sm mt-1">{errors.medicalRegistrationProof}</p>}

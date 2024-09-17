@@ -152,6 +152,45 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
     setServiceDropdownOpen(true);
   };
 
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        if (reader.readyState === 2) {
+          setAvatar(reader.result);
+        }
+      };
+
+      reader.readAsDataURL(file);
+
+      // Upload the file to Cloudinary
+      const formData1 = new FormData();
+      formData1.append("file", file);
+      formData1.append("upload_preset", "ml_default"); // Your unsigned upload preset
+
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dhvcgixeu/image/upload",
+          formData1
+        );
+
+        const uploadedUrl = response.data.secure_url; // Get the uploaded image URL
+        console.log("Image uploaded successfully:", uploadedUrl);
+
+        // Update the formData to store the uploaded image URL
+        handleChange({
+          target: {
+            name: "hospitalImage",
+            value: uploadedUrl,
+          },
+        });
+      } catch (error) {
+        console.error("Error uploading image to Cloudinary:", error.message);
+      }
+    }
+  };
 
   // Validation and submission
   const validateForm = () => {
@@ -488,7 +527,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                   type="file"
                   id="hospitalImage"
                   name="hospitalImage"
-                  onChange={handleChange}
+                  onChange={handleFileChange}
                   required
                   className="hidden"
                 />

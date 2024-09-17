@@ -2,12 +2,64 @@ import React from 'react';
 import { useState,useEffect } from 'react';
 import Navbar from '../Navbar';
 import ProgressBar from '../ProgressBar';
+import axios from 'axios';
 
 const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
   const [errors, setErrors] = useState({});
+  const [identityProof, setIdentityProof] = useState([]);  // Define state for identityProof
+  const [identityProof2, setIdentityProof2] = useState([]);
   const handleNextClick = () => {
     if (validateForm()) {
       handleNext();
+    }
+  };
+   
+  const handleFileChange = async (e, fieldName) => {
+    const files = e.target.files; 
+  
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+  
+      if (file) {
+        const reader = new FileReader();
+  
+        reader.onloadend = () => {
+          if (reader.readyState === 2) {
+            if (fieldName === "identityProof") {
+              setIdentityProof((prev) => [...prev, reader.result]);
+            } else if (fieldName === "identityProof2") {
+              setIdentityProof2((prev) => [...prev, reader.result]);
+            }
+          }
+        };
+  
+        reader.readAsDataURL(file);
+  
+        // Upload the file to Cloudinary
+        const formData1 = new FormData();
+        formData1.append("file", file);
+        formData1.append("upload_preset", "ml_default"); 
+  
+        try {
+          const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/dhvcgixeu/image/upload",
+            formData1
+          );
+  
+          const uploadedUrl = response.data.secure_url; 
+          console.log("Image uploaded successfully:", uploadedUrl);
+  
+          // Update the formData with the uploaded image URL
+          handleChange({
+            target: {
+              name: fieldName, 
+              value: uploadedUrl, 
+            },
+          });
+        } catch (error) {
+          console.error("Error uploading image to Cloudinary:", error.message);
+        }
+      }
     }
   };
 
@@ -53,12 +105,12 @@ const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
             Upload Identity Proof
           </label>
           <span className='text-xs text-gray-600  font-normal'> Upload Front View </span>
-          <div  method="POST" enctype="multipart/form-data" action = "/upload">
+          <div  method="POST" encType="multipart/form-data" action = "/upload">
           <input
             type="file"
             id="identityProof"
             name="identityProof"
-            onChange={handleChange}
+            onChange={(e) => handleFileChange(e, "identityProof")}
             
                 className={`w-full p-3 border ${errors.identityProof ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
           />
@@ -73,7 +125,7 @@ const Step4 = ({ handleChange, handleNext, handlePrev ,formData}) => {
             type="file"
             id="identityProof2"
             name="identityProof2"
-            onChange={handleChange}
+            onChange={(e) => handleFileChange(e, "identityProof2")}
             className={`w-full p-3 border ${errors.identityProof2 ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
             />
              {errors.identityProof2 && <p className="text-red-500 text-sm mt-1">{errors.identityProof2}</p>}
