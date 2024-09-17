@@ -54,10 +54,21 @@ const DoctorInfo = () => {
                   {" "}
                   {doctor.doctorName}
                 </h2>
-                <h2 className="text-xl font-semibold mb-2">{doctor.degree}</h2>
-                <p className="text-lg mb-2">
-                  <strong>Category:</strong> {doctor.category}
-                </p>
+
+                <h2 className="text-xl font-semibold mb-2">
+                {doctor.degree && doctor.degree.length > 0 
+                      ? doctor.degree.map((degree, index) => (
+                          <span key={index}>
+                            {degree}
+                            {index !== doctor.degree.length - 1 && ', '} {/* Add comma between degrees */}
+                          </span>
+                        ))
+                      : "No degrees available"}
+                  </h2>
+                  <p className="text-lg mb-2">
+                    <strong>Category:</strong> {doctor.category && Array.isArray(doctor.category) ? doctor.category.join(", ") : doctor.category}
+                  </p>
+
                 <p className="text-lg mb-2">
                   <strong>Experience:</strong> {doctor.experience} Years
                 </p>

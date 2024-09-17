@@ -13,12 +13,6 @@ const DoctorCard = ({ doctor }) => {
   if (!status) {
     return null;
   }
-
-  // Construct the full URL for the avatar image
- 
-  
-  
-  const avatarUrl = doctor.avatar
             
 
   return (
@@ -34,7 +28,7 @@ const DoctorCard = ({ doctor }) => {
         />
         <div>
           <h3 className="text-xl font-bold text-gray-900 mb-1">{doctor.doctorName}</h3>
-          <p className="text-gray-700 text-sm mb-1"><span className="font-semibold">Category:</span> {doctor.category}</p>
+          <p className="text-gray-700 text-sm mb-1"><span className="font-semibold">Category: </span>{doctor.category && Array.isArray(doctor.category) ? doctor.category.join(", ") : doctor.category}</p>
           <p className="text-gray-700 text-sm mb-1"><span className="font-semibold">City:</span> {doctor.city}</p>
           <p className="text-gray-700 text-sm mb-4"><span className="font-semibold">Consultancy Fees:</span> INR {doctor.consultancyFees}</p>
         </div>
