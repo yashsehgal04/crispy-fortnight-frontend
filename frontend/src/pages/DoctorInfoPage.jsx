@@ -45,14 +45,14 @@ const DoctorInfo = () => {
           <div className="bg-white shadow-lg rounded-lg p-6">
             <div className="flex flex-col md:flex-row items-center md:items-start mb-6 gap-40">
               <img
-                src={`${import.meta.env.VITE_BASE_URL}/uploads/avatar/${doctor.avatar}`}
+                src={doctor.avatar}
                 alt={doctor.doctorName}
                 className=" m-4 w-52 h-60 rounded-md object-cover mb-4 md:mb-0 md:mr-6"
               />
               <div>
                 <h2 className="text-3xl font-bold mb-2">
                   {" "}
-                  Dr. {doctor.doctorName}
+                  {doctor.doctorName}
                 </h2>
                 <h2 className="text-xl font-semibold mb-2">{doctor.degree}</h2>
                 <p className="text-lg mb-2">
@@ -133,7 +133,7 @@ const DoctorInfo = () => {
                 {doctor.establishmentProof && (
                   <div className="proof-image">
                     <img
-                      src={`${import.meta.env.VITE_BASE_URL}/uploads/establishmentProof/${doctor.establishmentProof}`}
+                      src={doctor.establishmentProof}
                       alt="Establishment Proof"
                       className="w-full h-auto rounded-md shadow-md"
                     />
@@ -143,7 +143,7 @@ const DoctorInfo = () => {
                 {doctor.identityProof && (
                   <div className="proof-image">
                     <img
-                      src={`${import.meta.env.VITE_BASE_URL}/uploads/identityProof/${doctor.identityProof}`}
+                      src={doctor.identityProof}
                       alt="Identity Proof"
                       className="w-full h-auto rounded-md shadow-md"
                     />
@@ -153,7 +153,7 @@ const DoctorInfo = () => {
                 {doctor.medicalRegistrationProof && (
                   <div className="proof-image">
                     <img
-                      src={`${import.meta.env.VITE_BASE_URL}/uploads/medicalRegistrationProof/${doctor.medicalRegistrationProof}`}
+                      src={doctor.medicalRegistrationProof}
                       alt="Medical Registration Proof"
                       className="w-full h-auto rounded-md shadow-md"
                     />

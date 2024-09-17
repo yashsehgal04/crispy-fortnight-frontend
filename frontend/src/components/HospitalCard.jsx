@@ -18,11 +18,11 @@ const HospitalCard = ({ hospital }) => {
       onClick={handleCardClick}
     >
       <div className="flex items-center mb-4">
-        {/* <img
-          src={hospitalUrl}
+        <img
+          src={hospital.hospitalImage}
           alt={hospital.hospitalName}
           className="w-20 h-20 rounded-full object-cover mr-4"
-        /> */}
+        />
         <div>
           <h3 className="text-xl font-bold text-gray-900 mb-1">{hospital.hospitalName}</h3>
           <p className="text-gray-700 text-sm mb-1"><span className="font-semibold">Category:</span> {hospital.category}</p>
