@@ -11,7 +11,7 @@ import HospitalInfo from './pages/HospitalInfoPage';
 import SearchResults from './pages/SearchResult';
 import LandingPage from './pages/LandingPage';
 import CreateCategoryForm from './components/CreateCategoryForm';
-
+import CategoryHospitals from "./pages/CategoryHospitals";
 
 const App = () => {
   const [isAdminAuthenticated, setAdminAuthenticated] = useState(false);
@@ -33,7 +33,7 @@ const App = () => {
         <Route path="/hospitals/:id" element={<HospitalInfo />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/create-category" element={checkCategoryPageAuthentication() ? <CreateCategoryForm /> : <Navigate to="/admin-login" />} />
-
+        <Route path="/category/:categoryName" element={<CategoryHospitals />} />
         {/* Redirect to homepage if no matching route */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

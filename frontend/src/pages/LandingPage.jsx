@@ -13,10 +13,21 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css'; 
 
 function Landingpage() {
-  // Initialize hospitals and doctors as empty arrays
   const [landingPageData, setLandingPageData] = useState({});
   const [doctors, setDoctors] = useState([]);
   const [hospitals, setHospitals] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories from your backend
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/categories/get-six-categories`);
+      const data = await response.json();
+      setCategories(data); // Set fetched categories to state
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -38,11 +49,12 @@ function Landingpage() {
       }
     };
 
+    // Call functions to fetch data
     fetchDoctors();
     fetchHospitals();
-  }, []);
+    fetchCategories(); // Move this here, inside the useEffect
 
-  useEffect(() => {
+    // Load local JSON data
     setLandingPageData(JsonData);
   }, []);
 
@@ -80,7 +92,8 @@ function Landingpage() {
     <div className="bg-gray-100 min-h-screen overflow-hidden">
       <Navbar showOther={true} showR={true}  />
       <Header data={landingPageData.header} />
-      <Services data={landingPageData.Services} />
+      <Services data={categories} />
+      
       
       {/* Doctor and Hospital Section */}
       <div className="w-full max-w-6xl mx-auto overflow-hidden">
