@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 const HospitalInfo = () => {
   const { id } = useParams();
@@ -31,6 +34,18 @@ const HospitalInfo = () => {
   if (!hospital) {
     return <p className="text-center text-lg">Loading...</p>;
   }
+
+  // Slider settings
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: true,
+  };
 
   return (
     <>
@@ -88,13 +103,23 @@ const HospitalInfo = () => {
               </div>
             </div>
 
-            {/* Hospital image on the right side */}
+            {/* Hospital images slider */}
             <div className="w-full md:w-1/3 flex-shrink-0">
-              <img
-                src={hospital.hospitalImage}
-                alt={hospital.hospitalName}
-                className="m-4 w-full h-auto rounded-md object-cover"
-              />
+              <Slider {...sliderSettings}>
+                {hospital.hospitalImages && hospital.hospitalImages.length > 0 ? (
+                  hospital.hospitalImages.map((image, index) => (
+                    <div key={index} className="p-4">
+                      <img
+                        src={image}
+                        alt={`${hospital.hospitalName} ${index + 1}`}
+                        className="w-full h-auto rounded-md object-cover"
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <p>No images available.</p>
+                )}
+              </Slider>
             </div>
           </div>
 
@@ -128,7 +153,7 @@ const HospitalInfo = () => {
                           {doctor.doctorName}
                         </h4>
                         <p className="text-lg text-gray-600 mb-2">
-                          <strong>Category:</strong> {doctor.category}
+                          <strong>Category:</strong> {doctor.category && Array.isArray(doctor.category) ? doctor.category.join(", ") : doctor.category}
                         </p>
                         <p className="text-lg text-gray-600 mb-2">
                           <strong>Consultancy Fees:</strong> {doctor.consultancyFees}

@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
-import Footer from './Footer';
 import { useNavigate } from "react-router-dom";
 
 const CreateCategoryForm = () => {
+  const [categoryType, setCategoryType] = useState('parent'); // New state to track category type
   const [categoryData, setCategoryData] = useState({
     categoryIcon: '',
     categoryName: '',
-    parentCategoryId: '',
+    parentCategoryName: '', // Now using parentCategoryName instead of parentCategoryId
     status: 'active',
-    subcategories: '' // Comma-separated subcategory IDs
   });
-  const navigate  = useNavigate();
+
+  const [parentCategories, setParentCategories] = useState([]); // To store parent categories
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (categoryType === 'subcategory') {
+      // Fetch the list of parent categories when 'subcategory' is selected
+      const fetchParentCategories = async () => {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/categories/get-parent-categories`);
+          setParentCategories(response.data);
+        } catch (error) {
+          console.error('Error fetching parent categories:', error);
+        }
+      };
+      fetchParentCategories();
+    }
+  }, [categoryType]); // Fetch categories only when category type changes to 'subcategory'
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,108 +40,132 @@ const CreateCategoryForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Convert comma-separated subcategory IDs to an array
-    const formattedSubcategories = categoryData.subcategories.split(',').map(id => id.trim()).filter(id => id);
-    
     try {
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/categories/create-category`, {
         ...categoryData,
-        subcategories: formattedSubcategories
+        parentCategoryName: categoryType === 'parent' ? '' : categoryData.parentCategoryName // If parent, omit parentCategoryName
       });
       console.log('Category created:', response.data);
-      // Handle successful response (e.g., show a success message, redirect, etc.)
+      navigate('/');
     } catch (error) {
       console.error('Error creating category:', error);
-      // Handle error response (e.g., show an error message)
     }
   };
 
   return (
     <>
-    <Navbar />
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-semibold mb-6 text-gray-800">Create a New Category</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="categoryIcon" className="block text-sm font-medium text-gray-700 mb-2">
-            Category Icon URL:
-          </label>
-          <input
-            type="text"
-            id="categoryIcon"
-            name="categoryIcon"
-            value={categoryData.categoryIcon}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+      <Navbar />
+      <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg mb-6">
+        <h1 className="text-2xl font-semibold mb-6 text-gray-800">Create a New Category</h1>
+        
+        {/* Radio Buttons for Category Type */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Category Type:</label>
+          <div className="flex items-center">
+            <label className="mr-4">
+              <input
+                type="radio"
+                name="categoryType"
+                value="parent"
+                checked={categoryType === 'parent'}
+                onChange={() => setCategoryType('parent')}
+                className="mr-2"
+              />
+              Parent Category
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="categoryType"
+                value="subcategory"
+                checked={categoryType === 'subcategory'}
+                onChange={() => setCategoryType('subcategory')}
+                className="mr-2"
+              />
+              Subcategory
+            </label>
+          </div>
         </div>
-        <div>
-          <label htmlFor="categoryName" className="block text-sm font-medium text-gray-700 mb-2">
-            Category Name:
-          </label>
-          <input
-            type="text"
-            id="categoryName"
-            name="categoryName"
-            value={categoryData.categoryName}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="parentCategoryId" className="block text-sm font-medium text-gray-700 mb-2">
-            Parent Category ID (optional):
-          </label>
-          <input
-            type="text"
-            id="parentCategoryId"
-            name="parentCategoryId"
-            value={categoryData.parentCategoryId}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-            Status:
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={categoryData.status}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Common Fields */}
+          <div>
+            <label htmlFor="categoryIcon" className="block text-sm font-medium text-gray-700 mb-2">
+              Category Icon URL:
+            </label>
+            <input
+              type="text"
+              id="categoryIcon"
+              name="categoryIcon"
+              value={categoryData.categoryIcon}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="categoryName" className="block text-sm font-medium text-gray-700 mb-2">
+              Category Name:
+            </label>
+            <input
+              type="text"
+              id="categoryName"
+              name="categoryName"
+              value={categoryData.categoryName}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Conditionally Render Parent Category Name Field */}
+          {categoryType === 'subcategory' && (
+            <div>
+              <label htmlFor="parentCategoryName" className="block text-sm font-medium text-gray-700 mb-2">
+                Parent Category Name (required for subcategory):
+              </label>
+              <select
+                id="parentCategoryName"
+                name="parentCategoryName"
+                value={categoryData.parentCategoryName}
+                onChange={handleChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Parent Category</option>
+                {parentCategories.map((category) => (
+                  <option key={category._id} value={category.categoryName}>
+                    {category.categoryName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+              Status:
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={categoryData.status}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
           >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-       
-        <div>
-          <label htmlFor="subcategories" className="block text-sm font-medium text-gray-700 mb-2">
-            Subcategory IDs (comma separated):
-          </label>
-          <input
-            type="text"
-            id="subcategories"
-            name="subcategories"
-            value={categoryData.subcategories}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <button
-          type="submit"
-          onClick={() => navigate('/')}
-          className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-        >
-          Create Category
-        </button>
-      </form>
-    </div>
+            Create Category
+          </button>
+        </form>
+      </div>
     </>
   );
 };

@@ -18,7 +18,8 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
   const [otherCategory, setOtherCategory] = useState('');
   const [hospitalType, setHospitalType] = useState(formData.hospitalType || ''); // Added for hospital type
   const [institutionType, setInstitutionType] = useState(formData.institutionType || ''); // Added for institution type
- 
+  const [uploadedImageNames, setUploadedImageNames] = useState([]);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState([]);
 
   const handleHospitalTypeChange = (e) => {
     setHospitalType(e.target.value);
@@ -153,44 +154,38 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
   };
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
+    const file = e.target.files[0]; // Select only one file at a time
 
-      reader.onloadend = () => {
-        if (reader.readyState === 2) {
-          setAvatar(reader.result);
-        }
-      };
-
-      reader.readAsDataURL(file);
-
-      // Upload the file to Cloudinary
-      const formData1 = new FormData();
-      formData1.append("file", file);
-      formData1.append("upload_preset", "ml_default"); // Your unsigned upload preset
-
+    if (file && uploadedImageUrls.length < 5) { // Ensure not more than 5 images
       try {
+        const formData1 = new FormData();
+        formData1.append("file", file);
+        formData1.append("upload_preset", "ml_default");
+
         const response = await axios.post(
           "https://api.cloudinary.com/v1_1/dhvcgixeu/image/upload",
           formData1
         );
 
-        const uploadedUrl = response.data.secure_url; // Get the uploaded image URL
-        console.log("Image uploaded successfully:", uploadedUrl);
+        const uploadedUrl = response.data.secure_url;
+        const imageName = file.name;
 
-        // Update the formData to store the uploaded image URL
-        handleChange({
-          target: {
-            name: "hospitalImage",
-            value: uploadedUrl,
-          },
+        // Add uploaded URL and image name to the state
+        setUploadedImageUrls((prev) => [...prev, uploadedUrl]);
+        setUploadedImageNames((prev) => [...prev, imageName]);
+
+        // Update formData with the new array of image URLs
+        setFormData({
+          ...formData,
+          hospitalImages: [...formData.hospitalImages, uploadedUrl],
         });
+
       } catch (error) {
         console.error("Error uploading image to Cloudinary:", error.message);
       }
     }
   };
+  
 
   // Validation and submission
   const validateForm = () => {
@@ -204,7 +199,6 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
     if (!hospitalType) newErrors.hospitalType = 'Please select if the hospital is private or government.';
     if (!institutionType) newErrors.institutionType = 'Please select if the institution is a hospital or clinic.';
     if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.hospitalImage) newErrors.hospitalImage = "Image is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -369,7 +363,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                 onClick={() => removeCategory(index)}
                 className="ml-2 text-red-600 hover:text-red-900"
               >
-                ×
+                
               </button>
             </div>
           ))}
@@ -429,7 +423,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                       onClick={() => removeSpecialization(index)}
                       className="ml-2 text-red-600 hover:text-red-900"
                     >
-                      ×
+                      
                     </button>
                   </div>
                 ))}
@@ -511,31 +505,55 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                 </div>
               )}
             </div>
-              {/* hospital image */}
-              <div>
-              <label htmlFor="hospitalImage" className="block text-sm font-medium text-gray-700 mb-2">
-              Upload Hospital / Clinic Image
-              </label>
-              <div className="flex items-center">
-                <label
-                  htmlFor="hospitalImage"
-                  className="bg-docsoGreen text-white px-4 py-2 rounded-md cursor-pointer hover:bg-middleGreen transition duration-300"
-                >
-                  Choose File
-                </label>
-                <input
-                  type="file"
-                  id="hospitalImage"
-                  name="hospitalImage"
-                  onChange={handleFileChange}
-                  required
-                  className="hidden"
-                />
-                <span className="ml-3 text-gray-700">
-                  {formData.hospitalImage ? formData.hospitalImage.name : 'No file chosen'}
-                </span>
-              </div>
-              {errors.hospitalImage && <p className="text-red-500 text-sm mt-1">{errors.hospitalImage}</p>}
+
+            <div>
+        <label htmlFor="hospitalImage" className="block text-sm font-medium text-gray-700 mb-2">
+          Upload Hospital / Clinic Image
+        </label>
+
+        {/* Display image previews */}
+        <div className="flex flex-wrap">
+          {uploadedImageUrls.map((url, index) => (
+            <div key={index} className="m-2 relative">
+              <img
+                src={url}
+                alt={`Uploaded ${index + 1}`}
+                className="w-20 h-20 object-cover rounded-md"
+              />
+              <p className="text-sm text-center">{uploadedImageNames[index]}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Image upload button */}
+        {uploadedImageUrls.length < 5 && (
+          <div className="flex items-center">
+            <label
+              htmlFor="hospitalImage"
+              className="bg-docsoGreen text-white px-4 py-2 rounded-md cursor-pointer hover:bg-middleGreen transition duration-300"
+            >
+              Choose File
+            </label>
+            <input
+              type="file"
+              id="hospitalImage"
+              name="hospitalImage"
+              onChange={handleFileChange}
+              accept="image/*"
+              className="hidden"
+            />
+            <span className="ml-3 text-gray-700">
+              {uploadedImageNames.length > 0
+                ? `Uploaded ${uploadedImageNames.length} image(s)`
+                : 'No file chosen'}
+            </span>
+          </div>
+        )}
+
+        {uploadedImageUrls.length >= 5 && (
+          <p className="text-red-500 mt-2">You can only upload up to 5 images.</p>
+        )}
+
 
             </div>
 
