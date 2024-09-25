@@ -328,13 +328,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
           </div>
 
           <div className="mt-6 space-x-2 flex justify-between">
-            <button
-              type="button"
-              onClick={handlePrev}
-              className="bg-gray-400 text-white mb-7 px-6 py-2 ml-6 rounded-md hover:bg-gray-500 transition duration-300"
-            >
-              Previous
-            </button>
+            
             <button
               type="button"
               onClick={handleNextClick}
