@@ -78,7 +78,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
     if (!passwordPattern.test(formData.password)) {
       newErrors.password = 'Password must be at least 8 characters long and include at least one letter, one number, and one special character from the following: @$!%*?&#.';
     }
-
+    if (!formData.doctorName){newErrors.doctorName = 'This field can not be empty.'}
     // Avatar file size validation (max 200 KB)
     if (formData.avatar && formData.avatar.size > 200 * 1024 ) {
       newErrors.avatar = 'Profile photo size must not exceed 200 KB.';
