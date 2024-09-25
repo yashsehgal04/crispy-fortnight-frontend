@@ -58,7 +58,15 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
       console.log('Current formData:', formData);
     }
   };
-
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
+    handleChange(e);
+  };
   return (
     <div>
       <Navbar showLogin={false} showLogout={false} showOther={false} />
@@ -95,7 +103,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
                   name="state"
                   value={formData.state}
                   onChange={(e) => {
-                    handleChange(e);
+                    handleInputChange(e);
                     setSelectedState(e.target.value);
                   }}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
@@ -120,7 +128,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
                   name="city"
                   value={formData.city}
                   onChange={(e) => {
-                    handleChange(e);
+                    handleInputChange(e);
                     setSelectedCity(e.target.value);
                   }}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
@@ -145,7 +153,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
                   name="address"
                   placeholder="Address"
                   value={formData.address}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.address ? 'border-red-500 focus:ring-red-500' : 'border-green-300 focus:ring-docsoGreen'
@@ -165,7 +173,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
                   name="landmark"
                   placeholder="Landmark"
                   value={formData.landmark}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.landmark ? 'border-red-500 focus:ring-red-500' : 'border-green-300 focus:ring-docsoGreen'
@@ -182,7 +190,7 @@ const Step3 = ({ formData, handleChange, handleChange2, handleNext, handlePrev }
                   name="pincode"
                   placeholder="Pincode"
                   value={formData.pincode}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.pincode ? 'border-red-500 focus:ring-red-500' : 'border-green-300 focus:ring-docsoGreen'

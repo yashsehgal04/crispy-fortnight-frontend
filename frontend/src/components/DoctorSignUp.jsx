@@ -34,6 +34,8 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
       setSelectedCategories(updatedCategories);
       setFormData((prevData) => ({ ...prevData, category: updatedCategories }));
     }
+  
+    
   };
 
   // Handle other category submission
@@ -79,6 +81,8 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
       newErrors.password = 'Password must be at least 8 characters long and include at least one letter, one number, and one special character from the following: @$!%*?&#.';
     }
     if (!formData.doctorName){newErrors.doctorName = 'This field can not be empty.'}
+
+    if (!formData.gender){newErrors.gender = 'This field can not be empty.'}
     // Avatar file size validation (max 200 KB)
     if (formData.avatar && formData.avatar.size > 200 * 1024 ) {
       newErrors.avatar = 'Profile photo size must not exceed 200 KB.';
@@ -177,6 +181,15 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
+    handleChange(e);
+  };
 
   return (
     <div>
@@ -199,7 +212,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 name="doctorName"
                 placeholder="Enter Your Name as Dr. ---"
                 value={formData.doctorName}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border ${errors.doctorName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
@@ -214,7 +227,18 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
               <select
                 id="category"
                 name="category"
-                onChange={(e) => handleCategorySelect(e.target.value)}
+                onChange={(e) => {
+                  const { name, value } = e.target;
+            
+                  // Reset the error for the field being edited
+                  setErrors({
+                    ...errors,
+                    [name]: ''
+                  });
+            
+                  // Call handleCategorySelect to manage category selection
+                  handleCategorySelect(value);
+                }}
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
                   errors.category ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
                 }`}
@@ -284,7 +308,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 name="dob"
                 placeholder="DD-MM-YYYY"
                 value={formData.dob}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border ${errors.dob ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
@@ -301,7 +325,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 id="gender"
                 name="gender"
                 value={formData.gender}  // Make sure this is a string
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen"
               >
@@ -310,6 +334,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
+              {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
             </div>
 
             
@@ -324,7 +349,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 name="phone"
                 placeholder="Mobile Number"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
@@ -342,7 +367,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 name="password"
                 placeholder="Enter your Password"
                 value={formData.password}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />

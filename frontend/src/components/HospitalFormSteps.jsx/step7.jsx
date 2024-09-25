@@ -27,7 +27,15 @@ const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => {
     }
   };
 
-
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
+    handleChange(e);
+  };
   return(
   <div className="min-h-screen bg-lightGreen">
     <Navbar showLogin={false} showLogout={false} />
@@ -48,7 +56,7 @@ const Step7 = ({ formData, handleChange, handleSubmit, handlePrev }) => {
           name="contactDetails"
           placeholder="Enter phone number"
           value={formData.contactDetails}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className={`w-full p-3 border ${errors.contactDetails ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-middleGreen`}
               />
                {errors.contactDetails && <p className="text-red-500 text-sm mt-1">{errors.contactDetails}</p>}

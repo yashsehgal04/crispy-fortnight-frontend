@@ -17,7 +17,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
   const handleCouncilChange = (e) => {
     const value = e.target.value;
     setIsOtherCouncil(value === "Others");
-    handleChange(e);
+    handleInputChange(e);
   };
 
   const validateForm = () => {
@@ -86,7 +86,15 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
       }
     }
   };
-  
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
+    handleChange(e);
+  };
 
   const sendVerificationCode = async () => {
     if (!formData.email) {
@@ -162,7 +170,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
                 name="email"
                 placeholder="Email"
                 value={formData.email}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
                   errors.email
@@ -222,7 +230,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
                 name="registrationNo"
                 placeholder="Registration Number"
                 value={formData.registrationNo}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
                   errors.registrationNo
@@ -311,7 +319,7 @@ const Step1 = ({ formData, handleChange, handleNext, handlePrev }) => {
                 name="registrationYear"
                 placeholder="Registration Year"
                 value={formData.registrationYear}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
                   errors.registrationYear

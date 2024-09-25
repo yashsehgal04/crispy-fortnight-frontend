@@ -37,6 +37,18 @@ const Step3 = ({ formData, handleChange, handleNext, handlePrev }) => {
     handleChange(e); // If you want to update the formData with institutionType
   };
 
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
+    handleChange(e);
+  };
+
+  
   return (
     <div className="min-h-screen bg-lightGreen">
       <Navbar />
@@ -81,7 +93,7 @@ const Step3 = ({ formData, handleChange, handleNext, handlePrev }) => {
               name="totalBeds"
               placeholder="Enter total beds"
               value={formData.totalBeds || ''}
-              onChange={handleChange}
+              onChange={handleInputChange}
               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                 errors.totalBeds ? 'border-red-500 focus:ring-red-500' : 'border-middleGreen focus:ring-middleGreen'
               }`}
@@ -101,7 +113,7 @@ const Step3 = ({ formData, handleChange, handleNext, handlePrev }) => {
                   name="seniorDoctors"
                   placeholder="Enter total senior doctors"
                   value={formData.seniorDoctors || ''}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.seniorDoctors ? 'border-red-500 focus:ring-red-500' : 'border-middleGreen focus:ring-middleGreen'
                   }`}
@@ -118,7 +130,7 @@ const Step3 = ({ formData, handleChange, handleNext, handlePrev }) => {
                   name="juniorDoctors"
                   placeholder="Enter total junior doctors"
                   value={formData.juniorDoctors || ''}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.juniorDoctors ? 'border-red-500 focus:ring-red-500' : 'border-middleGreen focus:ring-middleGreen'
                   }`}

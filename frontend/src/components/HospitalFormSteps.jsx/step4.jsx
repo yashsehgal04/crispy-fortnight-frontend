@@ -30,6 +30,16 @@ const Step4 = ({ formData, handleChange, handleNext, handlePrev }) => {
     handleChange(e); // Update formData with institutionType if needed
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
+    handleChange(e);
+  };
+
   return (
     <div className="min-h-screen bg-lightGreen">
       <Navbar showLogin={false} showLogout={false} />
@@ -74,7 +84,7 @@ const Step4 = ({ formData, handleChange, handleNext, handlePrev }) => {
             name="totalDoctorStaff"
             placeholder="Enter total doctors"
             value={formData.totalDoctorStaff || ''}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
               errors.totalDoctorStaff ? 'border-red-500 focus:ring-red-500' : 'border-middleGreen focus:ring-middleGreen'
             }`}
@@ -93,7 +103,7 @@ const Step4 = ({ formData, handleChange, handleNext, handlePrev }) => {
               name="nursingStaff"
               placeholder="Enter total nurses"
               value={formData.nursingStaff || ''}
-              onChange={handleChange}
+              onChange={handleInputChange}
               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                 errors.nursingStaff ? 'border-red-500 focus:ring-red-500' : 'border-middleGreen focus:ring-middleGreen'
               }`}

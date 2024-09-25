@@ -40,6 +40,16 @@ const Step2 = ({ formData, handleChange, handleNext, handlePrev, setFormData }) 
   const handleCollegeChange = (e) => {
     const value = e.target.value;
     setIsCollegeOther(value === 'Others');
+    handleInputChange(e);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
     handleChange(e);
   };
 
@@ -91,7 +101,16 @@ const Step2 = ({ formData, handleChange, handleNext, handlePrev, setFormData }) 
               <select
                 id="degree"
                 name="degree"
-                onChange={(e) => handleDegreeSelect(e.target.value)}
+                onChange={(e) => {
+                  const { name, value } = e.target;
+                  // Reset the error for the field being edited
+                  setErrors({
+                    ...errors,
+                    [name]: ''
+                  });
+                  // Call handleDegreeSelect to manage category selection
+                  handleDegreeSelect(value);
+                }}
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
                   errors.degree ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
                 }`}
@@ -199,7 +218,7 @@ const Step2 = ({ formData, handleChange, handleNext, handlePrev, setFormData }) 
             name="completionYear"
             placeholder="Completion Year"
             value={formData.completionYear}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
               errors.completionYear ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
@@ -218,7 +237,7 @@ const Step2 = ({ formData, handleChange, handleNext, handlePrev, setFormData }) 
             name="experience"
             placeholder="Experience (in years)"
             value={formData.experience}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
               errors.experience ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'

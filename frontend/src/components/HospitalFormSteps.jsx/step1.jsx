@@ -24,11 +24,23 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
   const handleHospitalTypeChange = (e) => {
     setHospitalType(e.target.value);
     setFormData((prevData) => ({ ...prevData, hospitalType: e.target.value }));
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
   };
 
   const handleInstitutionTypeChange = (e) => {
     setInstitutionType(e.target.value);
     setFormData((prevData) => ({ ...prevData, institutionType: e.target.value }));
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
   };
 
 
@@ -209,7 +221,15 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
       handleNext();
     }
   };
-
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    // Reset the error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: ''
+    });
+    handleChange(e);
+  };
   return (
     <div>
       <Navbar showLogin={false} showLogout={false} showOther={false} />
@@ -291,7 +311,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                 name="hospitalName"
                 placeholder="Hospital / Clinic Name"
                 value={formData.hospitalName}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 ${
                   errors.hospitalName ? "border-red-500 focus:ring-red-500" : "focus:ring-middleGreen"
                 }`}
@@ -308,7 +328,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                 name="email"
                 placeholder="Email"
                 value={formData.email}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
                   errors.email
@@ -331,7 +351,19 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
         <select
           id="category"
           name="category"
-          onChange={(e) => handleCategorySelect(e.target.value)}
+          onChange={(e) => {
+                  const { name, value } = e.target;
+            
+                  // Reset the error for the field being edited
+                  setErrors({
+                    ...errors,
+                    [name]: ''
+                  });
+            
+                  // Call handleCategorySelect to manage category selection
+                  handleCategorySelect(value);
+                }}
+          value={formData.category}
           className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
             errors.category ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
           }`}
@@ -363,7 +395,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                 onClick={() => removeCategory(index)}
                 className="ml-2 text-red-600 hover:text-red-900"
               >
-                
+                ×
               </button>
             </div>
           ))}
@@ -395,7 +427,20 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Specializations</label>
               <div className="relative inline-block w-full mb-4">
                 <select
-                  onChange={(e) => handleSpecializationSelect(e.target.value)}
+                  id="specialization"
+                  name="specialization"
+                  onChange={(e) => {
+                    const { name, value } = e.target;
+              
+                    // Reset the error for the field being edited
+                    setErrors({
+                      ...errors,
+                      [name]: ''
+                    });
+              
+                    // Call handleCategorySelect to manage category selection
+                    handleSpecializationSelect(value);
+                  }}
                   value={formData.specialization}
                   className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 ${
                     errors.specialization ? "border-red-500 focus:ring-red-500" : "focus:ring-middleGreen"
@@ -423,7 +468,7 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
                       onClick={() => removeSpecialization(index)}
                       className="ml-2 text-red-600 hover:text-red-900"
                     >
-                      
+                      ×
                     </button>
                   </div>
                 ))}
@@ -453,7 +498,19 @@ const Step1 = ({ formData, setFormData, handleChange, handleNext }) => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Services</label>
               <div className="relative inline-block w-full mb-4">
                 <select
-                  onChange={(e) => handleServiceSelect(e.target.value)}
+                  name="services"
+                  onChange={(e) => {
+                    const { name, value } = e.target;
+              
+                    // Reset the error for the field being edited
+                    setErrors({
+                      ...errors,
+                      [name]: ''
+                    });
+              
+                    // Call handleCategorySelect to manage category selection
+                    handleServiceSelect(value);
+                  }}
                   value={formData.services}
                   className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 ${
                     errors.services ? "border-red-500 focus:ring-red-500" : "focus:ring-middleGreen"
