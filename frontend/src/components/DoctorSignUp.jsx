@@ -74,9 +74,9 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
 
     // Password validation (min 8 characters, 1 special character, 1 digit, 1 letter)
 
-    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
     if (!passwordPattern.test(formData.password)) {
-      newErrors.password = 'Password must be at least 8 characters long, with at least 1 letter, 1 digit, and 1 special character.';
+      newErrors.password = 'Password must be at least 8 characters long and include at least one letter, one number, and one special character from the following: @$!%*?&#.';
     }
 
     // Avatar file size validation (max 200 KB)
