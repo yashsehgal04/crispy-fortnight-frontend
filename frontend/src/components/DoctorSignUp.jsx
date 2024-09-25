@@ -216,7 +216,7 @@ const SignUp = ({ setFormData, formData, handleChange, handleNext }) => {
                 name="category"
                 onChange={(e) => handleCategorySelect(e.target.value)}
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.category ? '' : 'border-gray-300 focus:ring-middleGreen'
+                  errors.category ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-middleGreen'
                 }`}
               >
                 <option value="">Select Category</option>
