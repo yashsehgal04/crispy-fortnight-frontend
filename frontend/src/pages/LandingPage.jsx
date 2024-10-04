@@ -57,13 +57,13 @@ function Landingpage() {
   };
 
   // Handle loading and error states
-  if (loadingCategories || loadingDoctors || loadingHospitals) {
-    return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-        <p className="text-gray-600 text-xl">Loading...</p>
-      </div>
-    );
-  }
+  // if (loadingCategories || loadingDoctors || loadingHospitals) {
+  //   return (
+  //     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+  //       <p className="text-gray-600 text-xl">Loading...</p>
+  //     </div>
+  //   );
+  // }
 
   if (errorCategories || errorDoctors || errorHospitals) {
     return (
@@ -77,13 +77,21 @@ function Landingpage() {
     <div className="bg-gray-100 min-h-screen overflow-hidden">
       <Navbar showOther={true} showR={true}  />
       <Header data={landingPageData.header} />
-      <Services data={categories} />
-      
+      {/* Services Section */}
+      <div>
+        {loadingCategories ? (
+          <p className="text-center text-gray-600">Loading services...</p>
+        ) : (
+          <Services data={categories} />
+        )}
+      </div>
       
       {/* Doctor and Hospital Section */}
       <div className="w-full max-w-6xl mx-auto overflow-hidden">
         <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen m-16 border-b border-gray-300">MEET OUR DOCTORS</h2>
-        {doctors.length > 0 ? (
+        {loadingDoctors ? (
+          <p className="text-center text-gray-600">Loading doctors...</p>
+        ) : doctors.length > 0 ? (
           <Slider {...getSliderSettings(doctors)}>
             {doctors.map((doctor) => (
               <DoctorCard key={doctor._id} doctor={doctor} />
@@ -94,7 +102,9 @@ function Landingpage() {
         )}
 
         <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen mt-16 m-10 border-b border-gray-300">OUR REGISTERED HOSPITALS</h2>
-        {hospitals.length > 0 ? (
+        {loadingHospitals ? (
+          <p className="text-center text-gray-600">Loading hospitals...</p>
+        ) : hospitals.length > 0 ? (
           <Slider {...getSliderSettings(hospitals)}>
             {hospitals.map((hospital) => (
               <HospitalCard key={hospital._id} hospital={hospital} />
@@ -109,5 +119,4 @@ function Landingpage() {
     </div>
   );
 }
-
 export default Landingpage;
