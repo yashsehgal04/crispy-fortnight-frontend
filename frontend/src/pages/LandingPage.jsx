@@ -1,3 +1,4 @@
+// src/pages/Landingpage.jsx
 import React, { useState, useEffect } from "react";
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -5,55 +6,22 @@ import { Header } from "../components/Header";
 import { Services } from '../components/Services';
 import JsonData from "../data/data.json";
 import "../App.css";
-import axios from 'axios';
 import DoctorCard from '../components/DoctorCard';
 import HospitalCard from '../components/HospitalCard';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
+import { useCategories, useDoctors, useHospitals } from '../hooks/useFetch'; 
 
 function Landingpage() {
   const [landingPageData, setLandingPageData] = useState({});
-  const [doctors, setDoctors] = useState([]);
-  const [hospitals, setHospitals] = useState([]);
-  const [categories, setCategories] = useState([]);
-
-  // Fetch categories from your backend
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/categories/get-six-categories`);
-      const data = await response.json();
-      setCategories(data); // Set fetched categories to state
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
+  
+  // Use React Query hooks
+  const { data: categories, isLoading: loadingCategories, error: errorCategories } = useCategories();
+  const { data: doctors, isLoading: loadingDoctors, error: errorDoctors } = useDoctors();
+  const { data: hospitals, isLoading: loadingHospitals, error: errorHospitals } = useHospitals();
 
   useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/doctors/all`);
-        console.log('Doctors API response:', response.data); 
-        setDoctors(Array.isArray(response.data) ? response.data.filter(doctor => doctor.isApproved).slice(0, 10) : []); 
-      } catch (error) {
-        console.error('Error fetching doctors:', error);
-      }
-    };
-
-    const fetchHospitals = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/hospitals/all-hospitals`);
-        setHospitals(Array.isArray(response.data) ? response.data.slice(0, 10) : []); 
-      } catch (error) {
-        console.error('Error fetching hospitals:', error);
-      }
-    };
-
-    // Call functions to fetch data
-    fetchDoctors();
-    fetchHospitals();
-    fetchCategories(); // Move this here, inside the useEffect
-
     // Load local JSON data
     setLandingPageData(JsonData);
   }, []);
@@ -87,6 +55,23 @@ function Landingpage() {
       ],
     };
   };
+
+  // Handle loading and error states
+  if (loadingCategories || loadingDoctors || loadingHospitals) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <p className="text-gray-600 text-xl">Loading...</p>
+      </div>
+    );
+  }
+
+  if (errorCategories || errorDoctors || errorHospitals) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <p className="text-red-500 text-xl">Error loading data. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen overflow-hidden">
