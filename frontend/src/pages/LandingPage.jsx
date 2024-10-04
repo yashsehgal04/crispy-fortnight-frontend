@@ -11,12 +11,15 @@ import HospitalCard from '../components/HospitalCard';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
-
+import { useNavigate } from "react-router-dom"; 
+import User  from '../components/user';
 function Landingpage() {
   const [landingPageData, setLandingPageData] = useState({});
   const [doctors, setDoctors] = useState([]);
   const [hospitals, setHospitals] = useState([]);
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
+  const [showUserComponent, setShowUserComponent] = useState(false);
 
   // Fetch categories from your backend
   const fetchCategories = async () => {
@@ -88,40 +91,70 @@ function Landingpage() {
     };
   };
 
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem("token"); // Fetch the token from local storage
+      if (!token) {
+        // If no token is found, show the User component
+        setShowUserComponent(true);
+      } else {
+        // If a token is found, hide the User component
+        setShowUserComponent(false);
+      }
+    };
+  
+    // Call the checkToken function on initial load and when token changes
+    checkToken();
+  
+    // Optional: set up an event listener to listen for storage changes (i.e., when the token is added)
+    window.addEventListener("storage", checkToken);
+  
+    return () => {
+      window.removeEventListener("storage", checkToken); // Cleanup the event listener
+    };
+  }, []); 
+
+
   return (
-    <div className="bg-gray-100 min-h-screen overflow-hidden">
-      <Navbar showOther={true} showR={true}  />
-      <Header data={landingPageData.header} />
-      <Services data={categories} />
-      
-      
-      {/* Doctor and Hospital Section */}
-      <div className="w-full max-w-6xl mx-auto overflow-hidden">
-        <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen m-16 border-b border-gray-300">MEET OUR DOCTORS</h2>
-        {doctors.length > 0 ? (
-          <Slider {...getSliderSettings(doctors)}>
-            {doctors.map((doctor) => (
-              <DoctorCard key={doctor._id} doctor={doctor} />
-            ))}
-          </Slider>
-        ) : (
-          <p className="text-center text-gray-600">No doctors available</p>
-        )}
+    <>
+      {showUserComponent && (
+          <User setShowUserComponent={setShowUserComponent}/>
 
-        <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen mt-16 m-10 border-b border-gray-300">OUR REGISTERED HOSPITALS</h2>
-        {hospitals.length > 0 ? (
-          <Slider {...getSliderSettings(hospitals)}>
-            {hospitals.map((hospital) => (
-              <HospitalCard key={hospital._id} hospital={hospital} />
-            ))}
-          </Slider>
-        ) : (
-          <p className="text-center text-gray-600">No hospitals available</p>
-        )}
+      )}
+
+      <div className={`${showUserComponent ? "backdrop-blur-sm" : ""} bg-gray-100 min-h-screen overflow-hidden`}>
+        <Navbar showOther={true} showR={true} />
+        <Header data={landingPageData.header} />
+        <Services data={categories} />
+
+        {/* Doctor and Hospital Section */}
+        <div className="w-full max-w-6xl mx-auto overflow-hidden">
+          <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen m-16 border-b border-gray-300">MEET OUR DOCTORS</h2>
+          {doctors.length > 0 ? (
+            <Slider {...getSliderSettings(doctors)}>
+              {doctors.map((doctor) => (
+                <DoctorCard key={doctor._id} doctor={doctor} />
+              ))}
+            </Slider>
+          ) : (
+            <p className="text-center text-gray-600">No doctors available</p>
+          )}
+
+          <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen mt-16 m-10 border-b border-gray-300">OUR REGISTERED HOSPITALS</h2>
+          {hospitals.length > 0 ? (
+            <Slider {...getSliderSettings(hospitals)}>
+              {hospitals.map((hospital) => (
+                <HospitalCard key={hospital._id} hospital={hospital} />
+              ))}
+            </Slider>
+          ) : (
+            <p className="text-center text-gray-600">No hospitals available</p>
+          )}
+        </div>
+
+        <Footer />
       </div>
-
-      <Footer />
-    </div>
+    </>
   );
 }
 

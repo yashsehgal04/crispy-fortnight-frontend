@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import logo from '../assets/logo.jpg';
 
 export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [logout,setlogout] = useState();
   const navigate = useNavigate();
 
   const handleSearchChange = (e) => {
@@ -47,6 +48,36 @@ export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
     
   };
 
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem("token"); // Fetch the token from local storage
+      if (!token) {
+        // If no token is found
+        setlogout(false);
+      } else {
+        // If a token is found
+        setlogout(true);
+      }
+    };
+  
+    // Call the checkToken function on initial load and when token changes
+    checkToken();
+  
+    // Optional: set up an event listener to listen for storage changes (i.e., when the token is added)
+    window.addEventListener("storage", checkToken);
+  
+    return () => {
+      window.removeEventListener("storage", checkToken); // Cleanup the event listener
+    };
+  }, []); 
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.dispatchEvent(new Event("storage")); // Remove token from local storage
+    navigate("/"); // Navigate to the homepage or login page
+  };
+
   return (
     <div>
       <nav className="bg-docsoGreen p-2 shadow-lg">
@@ -83,6 +114,17 @@ export default function Navbar({ showAdmin, showR, showOther, showSearch }) {
               </svg>
             </button>
           </div>
+
+{
+  logout && (
+    <ul className="hidden md:flex flex-grow justify-center space-x-6 text-white">
+    <li className="hover:text-lightGreen">
+      <Link to="/" onClick={handleLogout}
+      >Logout</Link>
+    </li>
+  </ul>
+  )
+}
 
           {/* Navigation Links (Desktop View) */}
           {showOther && (
