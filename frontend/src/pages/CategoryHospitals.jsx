@@ -4,7 +4,7 @@ import axios from "axios";
 import HospitalCard from "../components/HospitalCard"; // Create this component to display individual hospital data
 import DoctorCard from "../components/DoctorCard";
 import { useNavigate } from "react-router-dom"; 
-
+import Navbar from '../components/Navbar';
 const CategoryHospitals = () => {
   const { categoryName } = useParams(); // Get the category name from the URL
   const [hospitals, setHospitals] = useState([]);
@@ -66,7 +66,10 @@ const CategoryHospitals = () => {
   }
 
   return (
+    <>
+    <Navbar showOther={true} showR={true}  />
     <div className="container mx-auto p-10">
+            
       <h2 className="text-4xl font-bold mb-5">{categoryName} Hospitals/Clinics</h2>
       
       {/* Display Hospitals */}
@@ -116,6 +119,7 @@ const CategoryHospitals = () => {
         </>
       )}
     </div>
+    </>
   );
 };
 
