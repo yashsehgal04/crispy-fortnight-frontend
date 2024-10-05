@@ -5,13 +5,43 @@ const RegisterUser = () => {
   const [phone, setPhone] = useState('');
   const [fid, setFid] = useState('');
   const [fullName, setFullName] = useState('');
-  const [profileImage, setProfileImage] = useState('https://cdn-icons-png.flaticon.com/512/6833/6833605.png');
+  const [profileImage, setProfileImage] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStCJpmc7wNF8Ti2Tuh_hcIRZUGOc23KBTx2A&s');
   const [dob, setDob] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
   const [gender, setGender] = useState('');
   const [abhaId, setAbhaId] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
   const navigate = useNavigate();
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setUploadingImage(true);
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setProfileImage(data.url);  // Use the URL received from the image upload API
+      } else {
+        setErrorMessage('Image upload failed.');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setErrorMessage('Something went wrong during image upload.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +56,7 @@ const RegisterUser = () => {
           phone,
           fid,
           fullName,
-          profileImage,
+          profileImage,  // Include the profile image URL here
           dob,
           bloodGroup,
           gender,
@@ -35,11 +65,9 @@ const RegisterUser = () => {
       });
 
       const data = await response.json();
-      if (response.status===201) {
-        // Save the token to local storage
+      if (response.status === 201) {
         localStorage.setItem('token', data.token);
-
-        // Navigate to the home page
+        window.alert("User Registered. You are now logged in.")
         navigate('/');
       } else {
         setErrorMessage(data.message || 'Registration failed.');
@@ -57,18 +85,20 @@ const RegisterUser = () => {
         {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
+        <div>
+        {uploadingImage && <p>Uploading image...</p>}
+        <img src={profileImage} alt="Profile" className="mt-4 w-24 h-24 rounded-full mx-auto" />
+            <label className="block text-sm font-medium text-gray-700">Profile Image</label>
             <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              type="file"
+              onChange={handleImageUpload}
               className="w-full px-4 py-2 mt-1 border rounded-md focus:ring-docsoGreen focus:border-docsoGreen"
-              required
+              accept="image/*"
             />
+
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">FID</label>
+            <label className="block text-sm font-medium text-gray-700">Username</label>
             <input
               type="text"
               value={fid}
@@ -87,6 +117,19 @@ const RegisterUser = () => {
               required
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full px-4 py-2 mt-1 border rounded-md focus:ring-docsoGreen focus:border-docsoGreen"
+              required
+            />
+          </div>
+
+          
           <div>
             <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
             <input
