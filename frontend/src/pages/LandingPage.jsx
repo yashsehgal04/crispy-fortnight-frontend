@@ -12,10 +12,14 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css'; 
 import { useCategories, useDoctors, useHospitals } from '../hooks/useFetch'; 
+import { useNavigate } from "react-router-dom"; 
+import User  from '../components/user';
+
 
 function Landingpage() {
   const [landingPageData, setLandingPageData] = useState({});
-  
+  const navigate = useNavigate();
+  const [showUserComponent, setShowUserComponent] = useState(false);
   // Use React Query hooks
   const { data: categories, isLoading: loadingCategories, error: errorCategories } = useCategories();
   const { data: doctors, isLoading: loadingDoctors, error: errorDoctors } = useDoctors();
@@ -56,14 +60,28 @@ function Landingpage() {
     };
   };
 
-  // Handle loading and error states
-  // if (loadingCategories || loadingDoctors || loadingHospitals) {
-  //   return (
-  //     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-  //       <p className="text-gray-600 text-xl">Loading...</p>
-  //     </div>
-  //   );
-  // }
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem("token"); // Fetch the token from local storage
+      if (!token) {
+        setShowUserComponent(true);  // Show the User component if no token is found
+      } else {
+        setShowUserComponent(false); // Hide the User component if token exists
+      }
+    };
+
+    // Run the token check every 6 seconds using setInterval
+    const interval = setInterval(checkToken, 10000);
+
+    // Initial token check on page load
+    checkToken();
+
+    // Cleanup the interval when the component unmounts
+    return () => {
+      clearInterval(interval); 
+    };
+  }, []);
+
 
   if (errorCategories || errorDoctors || errorHospitals) {
     return (
@@ -74,8 +92,13 @@ function Landingpage() {
   }
 
   return (
+    <>
+      {showUserComponent && (
+          <User setShowUserComponent={setShowUserComponent}/>
+
+      )}
     <div className="bg-gray-100 min-h-screen overflow-hidden">
-      <Navbar showOther={true} showR={true}  />
+      <Navbar showOther={true} showR={true} setShowUserComponent={setShowUserComponent} />
       <Header data={landingPageData.header} />
       {/* Services Section */}
       <div>
@@ -117,6 +140,7 @@ function Landingpage() {
 
       <Footer />
     </div>
+    </>
   );
 }
 export default Landingpage;

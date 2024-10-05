@@ -12,6 +12,8 @@ import SearchResults from './pages/SearchResult';
 import LandingPage from './pages/LandingPage';
 import CreateCategoryForm from './components/CreateCategoryForm';
 import CategoryHospitals from "./pages/CategoryHospitals";
+import RegisterUser from './pages/RegisterUser';
+
 
 const App = () => {
   const [isAdminAuthenticated, setAdminAuthenticated] = useState(false);
@@ -23,6 +25,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/home" element={<HomePage />} />
+        <Route path="/register-user" element={<RegisterUser />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/doctor-registration" element={<DoctorRegistrationForm />} />
         <Route path="/hospital-registration" element={<HospitalRegistrationForm />} />
