@@ -8,9 +8,9 @@ import JsonData from "../data/data.json";
 import "../App.css";
 import DoctorCard from '../components/DoctorCard';
 import HospitalCard from '../components/HospitalCard';
-// import Slider from 'react-slick';
-// import 'slick-carousel/slick/slick.css'; 
-// import 'slick-carousel/slick/slick-theme.css'; 
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css'; 
+import 'slick-carousel/slick/slick-theme.css'; 
 import { useCategories, useDoctors, useHospitals } from '../hooks/useFetch'; 
 import { useNavigate } from "react-router-dom"; 
 import User  from '../components/user';
@@ -30,35 +30,35 @@ function Landingpage() {
     setLandingPageData(JsonData);
   }, []);
 
-  // const getSliderSettings = (items) => {
-  //   const slidesToShow = items.length < 3 ? items.length : 3;
-  //   return {
-  //     dots: items.length > 1,
-  //     infinite: items.length > 1,
-  //     speed: 500,
-  //     slidesToShow: slidesToShow,
-  //     slidesToScroll: 1,
-  //     centerMode: false, 
-  //     centerPadding: '0',
-  //     responsive: [
-  //       {
-  //         breakpoint: 1024,
-  //         settings: {
-  //           slidesToShow: items.length < 2 ? items.length : 2,
-  //           slidesToScroll: 1,
-  //         },
-  //       },
-  //       {
-  //         breakpoint: 600,
-  //         settings: {
-  //           slidesToShow: 1,
-  //           slidesToScroll: 1,
-  //           arrows: false, 
-  //         },
-  //       },
-  //     ],
-  //   };
-  // };
+  const getSliderSettings = (items) => {
+    const slidesToShow = items.length < 3 ? items.length : 3;
+    return {
+      dots: items.length > 1,
+      infinite: items.length > 1,
+      speed: 500,
+      slidesToShow: slidesToShow,
+      slidesToScroll: 1,
+      centerMode: false, 
+      centerPadding: '0',
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: items.length < 2 ? items.length : 2,
+            slidesToScroll: 1,
+          },
+        },
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: false, 
+          },
+        },
+      ],
+    };
+  };
 
   useEffect(() => {
     const checkToken = () => {
@@ -112,7 +112,7 @@ function Landingpage() {
       {/* Doctor and Hospital Section */}
       <div className="w-full max-w-6xl mx-auto overflow-hidden">
         <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen m-16 border-b border-gray-300">MEET OUR DOCTORS</h2>
-        {/* {loadingDoctors ? (
+        {loadingDoctors ? (
           <p className="text-center text-gray-600">Loading doctors...</p>
         ) : doctors.length > 0 ? (
           <Slider {...getSliderSettings(doctors)}>
@@ -122,10 +122,10 @@ function Landingpage() {
           </Slider>
         ) : (
           <p className="text-center text-gray-600">No doctors available</p>
-        )} */}
+        )}
 
         <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen mt-16 m-10 border-b border-gray-300">OUR REGISTERED HOSPITALS</h2>
-        {/* {loadingHospitals ? (
+        {loadingHospitals ? (
           <p className="text-center text-gray-600">Loading hospitals...</p>
         ) : hospitals.length > 0 ? (
           <Slider {...getSliderSettings(hospitals)}>
@@ -135,7 +135,7 @@ function Landingpage() {
           </Slider>
         ) : (
           <p className="text-center text-gray-600">No hospitals available</p>
-        )} */}
+        )}
       </div>
 
       <Footer />
