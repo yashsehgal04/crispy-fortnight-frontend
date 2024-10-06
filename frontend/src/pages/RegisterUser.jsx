@@ -68,7 +68,7 @@ const RegisterUser = () => {
       if (response.status === 201) {
         localStorage.setItem('token', data.token);
         window.alert("User Registered. You are now logged in.")
-        navigate('/');
+        navigate('/register-address');
       } else {
         setErrorMessage(data.message || 'Registration failed.');
       }
@@ -80,7 +80,7 @@ const RegisterUser = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-lightGreen">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-lg">
+      <div className="w-full max-w-md p-8 m-4 space-y-6 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-bold text-center text-docsoGreen">Register</h2>
         {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
 
@@ -179,7 +179,7 @@ const RegisterUser = () => {
             type="submit"
             className="w-full py-2 text-white bg-docsoGreen rounded-md hover:bg-middleGreen focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-docsoGreen"
           >
-            Complete Registration
+            Next
           </button>
         </form>
       </div>

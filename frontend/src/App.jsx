@@ -13,6 +13,7 @@ import LandingPage from './pages/LandingPage';
 import CreateCategoryForm from './components/CreateCategoryForm';
 import CategoryHospitals from "./pages/CategoryHospitals";
 import RegisterUser from './pages/RegisterUser';
+import RegisterAddress from './pages/addressPage';
 
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
       <Routes>
         <Route path="/home" element={<HomePage />} />
         <Route path="/register-user" element={<RegisterUser />} />
+        <Route path="/register-address" element={<RegisterAddress />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/doctor-registration" element={<DoctorRegistrationForm />} />
         <Route path="/hospital-registration" element={<HospitalRegistrationForm />} />
