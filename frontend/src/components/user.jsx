@@ -99,10 +99,24 @@ const User = ({ setShowUserComponent }) => {
 
               <button
                 type="submit"
-                className="w-3/4 py-1 bg-lightGreen text-black rounded-md hover:bg-middleGreen focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lightGreen"
+                className="w-3/4 py-1 text-white bg-docsoGreen rounded-md hover:bg-middleGreen focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-docsoGreen transition-transform transform hover:scale-95"
               >
                 Sign In
               </button>
+
+
+
+               {/* Small link to navigate to register-user */}
+               <p className="text-base text-black">
+                Not a user?{" "}
+                <span
+                  onClick={() => navigate("/register-user")}
+                  className="text-blue-600 cursor-pointer hover:text-blue-800 hover:underline"
+                >
+                  Register!
+                </span>
+              </p>
+
             </form>
           </div>
         </div>
