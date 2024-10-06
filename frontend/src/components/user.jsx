@@ -9,6 +9,13 @@ const User = ({ setShowUserComponent }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate phone number length
+    if (phone.length !== 10) {
+      setErrorMessage("Phone number must be exactly 10 digits.");
+      return; // Prevent form submission
+    }
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/auth1`, {
         method: "POST",
@@ -105,3 +112,4 @@ const User = ({ setShowUserComponent }) => {
 };
 
 export default User;
+

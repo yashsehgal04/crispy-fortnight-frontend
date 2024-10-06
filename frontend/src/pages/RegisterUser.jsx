@@ -11,6 +11,7 @@ const RegisterUser = () => {
   const [gender, setGender] = useState('');
   const [abhaId, setAbhaId] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
   const navigate = useNavigate();
 
@@ -22,7 +23,7 @@ const RegisterUser = () => {
     formData.append('image', file);
 
     setUploadingImage(true);
-    
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/image/upload`, {
         method: 'POST',
@@ -46,6 +47,13 @@ const RegisterUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (phone.length !== 10) {
+      setPhoneError('Phone number must be 10 digits.');
+      return;
+    } else {
+      setPhoneError('');
+    }
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users/create`, {
         method: 'POST',
@@ -67,7 +75,7 @@ const RegisterUser = () => {
       const data = await response.json();
       if (response.status === 201) {
         localStorage.setItem('token', data.token);
-        window.alert("User Registered. You are now logged in.")
+        window.alert("User Registered. You are now logged in.");
         navigate('/register-address');
       } else {
         setErrorMessage(data.message || 'Registration failed.');
@@ -85,9 +93,9 @@ const RegisterUser = () => {
         {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-        {uploadingImage && <p>Uploading image...</p>}
-        <img src={profileImage} alt="Profile" className="mt-4 w-24 h-24 rounded-full mx-auto" />
+          <div>
+            {uploadingImage && <p>Uploading image...</p>}
+            <img src={profileImage} alt="Profile" className="mt-4 w-24 h-24 rounded-full mx-auto" />
             <label className="block text-sm font-medium text-gray-700">Profile Image</label>
             <input
               type="file"
@@ -95,7 +103,6 @@ const RegisterUser = () => {
               className="w-full px-4 py-2 mt-1 border rounded-md focus:ring-docsoGreen focus:border-docsoGreen"
               accept="image/*"
             />
-
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Username</label>
@@ -127,9 +134,9 @@ const RegisterUser = () => {
               className="w-full px-4 py-2 mt-1 border rounded-md focus:ring-docsoGreen focus:border-docsoGreen"
               required
             />
+            {phoneError && <p className="text-red-500 text-sm">{phoneError}</p>}
           </div>
 
-          
           <div>
             <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
             <input
@@ -140,16 +147,27 @@ const RegisterUser = () => {
               required
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Blood Group</label>
-            <input
-              type="text"
+            <select
               value={bloodGroup}
               onChange={(e) => setBloodGroup(e.target.value)}
               className="w-full px-4 py-2 mt-1 border rounded-md focus:ring-docsoGreen focus:border-docsoGreen"
               required
-            />
+            >
+              <option value="" disabled>Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">Gender</label>
             <select
@@ -164,6 +182,7 @@ const RegisterUser = () => {
               <option value="Other">Other</option>
             </select>
           </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700">ABHA ID</label>
             <input
