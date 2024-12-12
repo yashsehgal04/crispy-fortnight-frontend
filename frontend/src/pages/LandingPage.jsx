@@ -70,23 +70,29 @@ function Landingpage() {
       }
     };
 
-    // Run the token check every 6 seconds using setInterval
-    const interval = setInterval(checkToken, 10000);
-
-    // Initial token check on page load
+    // Only check once when component mounts
     checkToken();
-
-    // Cleanup the interval when the component unmounts
-    return () => {
-      clearInterval(interval); 
-    };
   }, []);
 
 
   if (errorCategories || errorDoctors || errorHospitals) {
     return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-        <p className="text-red-500 text-xl">Error loading data. Please try again later.</p>
+      <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center space-y-4">
+        {errorCategories && (
+          <p className="text-red-500 text-xl">Error loading categories: {errorCategories.message}</p>
+        )}
+        {errorDoctors && (
+          <p className="text-red-500 text-xl">Error loading doctors: {errorDoctors.message}</p>
+        )}
+        {errorHospitals && (
+          <p className="text-red-500 text-xl">Error loading hospitals: {errorHospitals.message}</p>
+        )}
+        <button 
+          onClick={() => window.location.reload()} 
+          className="bg-docsoGreen text-white px-4 py-2 rounded hover:bg-opacity-90"
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -127,7 +133,7 @@ function Landingpage() {
         <h2 className="text-4xl sm:text-3xl text-center font-bold text-docsoGreen mt-16 m-10 border-b border-gray-300">OUR REGISTERED HOSPITALS</h2>
         {loadingHospitals ? (
           <p className="text-center text-gray-600">Loading hospitals...</p>
-        ) : hospitals.length > 0 ? (
+        ) : Array.isArray(hospitals) && hospitals.length > 0 ? (
           <Slider {...getSliderSettings(hospitals)}>
             {hospitals.map((hospital) => (
               <HospitalCard key={hospital._id} hospital={hospital} />
