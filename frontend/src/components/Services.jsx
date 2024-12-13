@@ -19,20 +19,22 @@ export const Services = ({ data }) => {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          {data && data.length > 0
-            ? data.map((category, index) => (
-                <div
-                  key={`${category.categoryName}-${index}`}
-                  className="service-card p-6 rounded-lg shadow-lg cursor-pointer"
-                  onClick={() => handleServiceClick(category.categoryName)}
-                >
-                  <div className="icon-container mb-4 mx-auto flex items-center justify-center rounded-full bg-gradient-to-r from-[#477872] to-[#6fb0a8] w-32 h-32">
-                    <img src={category.categoryIcon} alt={category.categoryName} className="w-16 h-16" />
-                  </div>
-                  <h3 className="text-xl font-semibold">{category.categoryName}</h3>
+          {Array.isArray(data) && data.length > 0 ? (
+            data.map((category, index) => (
+              <div
+                key={`${category.categoryName}-${index}`}
+                className="service-card p-6 rounded-lg shadow-lg cursor-pointer"
+                onClick={() => handleServiceClick(category.categoryName)}
+              >
+                <div className="icon-container mb-4 mx-auto flex items-center justify-center rounded-full bg-gradient-to-r from-[#477872] to-[#6fb0a8] w-32 h-32">
+                  <img src={category.categoryIcon} alt={category.categoryName} className="w-16 h-16" />
                 </div>
-              ))
-            : "Loading..."}
+                <h3 className="text-xl font-semibold">{category.categoryName}</h3>
+              </div>
+            ))
+          ) : (
+            <p className="col-span-3 text-center text-gray-600">No services available</p>
+          )}
         </div>
       </div>
     </div>

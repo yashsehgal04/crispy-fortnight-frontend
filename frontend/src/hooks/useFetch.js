@@ -10,9 +10,24 @@ const fetchCategories = async () => {
 
 // Function to fetch doctors
 const fetchDoctors = async () => {
-  const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/doctors/all`);
-  // Assuming response.data is an array
-  return response.data.filter(doctor => doctor.isApproved).slice(0, 10);
+  try {
+    // Make sure VITE_BASE_URL is correctly set in your .env file
+    console.log('API URL:', `${import.meta.env.VITE_BASE_URL}/api/doctors/all`);
+    
+    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/doctors/all`);
+    
+    // Add error handling for non-JSON responses
+    if (typeof response.data === 'string') {
+      console.error('Received HTML instead of JSON. Check API URL.');
+      return [];
+    }
+    
+    const doctors = Array.isArray(response.data) ? response.data : [];
+    return doctors.filter(doctor => doctor.isApproved).slice(0, 10);
+  } catch (error) {
+    console.error('Error fetching doctors:', error);
+    throw new Error('Failed to fetch doctors. Please check API configuration.');
+  }
 };
 
 // Function to fetch hospitals
